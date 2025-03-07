@@ -9,6 +9,7 @@ import weather.Period;
 import weather.WeatherAPI;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class JavaFX extends Application {
 	TextField temperature,weather;
@@ -31,9 +32,9 @@ public class JavaFX extends Application {
 		weather = new TextField();
 		temperature.setText("Today's weather is: "+String.valueOf(forecast.get(0).temperature));
 		weather.setText(forecast.get(0).shortForecast);
-		
-		
-		
+
+		MyWeatherAPI api = new MyWeatherAPI();
+		System.out.println(Arrays.toString(api.getCoords()));
 				
 		Scene scene = new Scene(new VBox(temperature,weather), 700,700);
 		primaryStage.setScene(scene);
