@@ -35,6 +35,8 @@ public class JavaFX extends Application {
 
 		MyWeatherAPI api = new MyWeatherAPI();
 		System.out.println(Arrays.toString(api.getCoords()));
+
+		//hello testing
 				
 		Scene scene = new Scene(new VBox(temperature,weather), 700,700);
 		primaryStage.setScene(scene);
