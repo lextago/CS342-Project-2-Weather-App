@@ -1,6 +1,7 @@
 import javafx.scene.Scene;
 
 import javafx.scene.control.Button;
+import javafx.scene.text.*;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -9,6 +10,7 @@ import javafx.stage.Stage;
 import weather.Period;
 import weather.WeatherAPI;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -37,25 +39,69 @@ public class SceneBuilder {
 	}
 
 	public static BorderPane dailyForecastScreen(){
+		VBox root = new VBox();
+		VBox days = new VBox();
 		TextField dailyForecast = new TextField("Daily Forecast");
 
-		VBox root = new VBox(dailyForecast);
+		TextField sevenDays = new TextField("7 Days");
+		sevenDays.setPrefSize(25,25);
+
+        TextField dayOne = new TextField("Day One");
+		dayOne.setPrefSize(60,60);
+
+		TextField dayTwo = new TextField("Day Two");
+		dayTwo.setPrefSize(60,60);
+
+		TextField dayThree = new TextField("Day Three");
+		dayThree.setPrefSize(60,60);
+
+		TextField dayFour = new TextField("Day Four");
+		dayFour.setPrefSize(60,60);
+
+		TextField dayFive = new TextField("Day Five");
+		dayFive.setPrefSize(60,60);
+
+		TextField daySix = new TextField("Day Six");
+		daySix.setPrefSize(60,60);
+
+		TextField daySeven = new TextField("Day Seven");
+		daySeven.setPrefSize(60,60);
+
+		days = new VBox(sevenDays, dayOne, dayTwo, dayThree, dayFour, dayFive, daySix, daySeven);
+		root = new VBox(dailyForecast, days);
+		root.setSpacing(60);
 
 		return new BorderPane(root);
 	}
 
 	public static BorderPane weeklyTrendsScreen(){
 		TextField weeklyTrends = new TextField("Weekly Trends");
-
 		VBox root = new VBox(weeklyTrends);
 
 		return new BorderPane(root);
 	}
 
 	public static BorderPane settingsScreen(){
+		VBox settingBox = new VBox();
+		VBox settingBoxTwo = new VBox();
+		VBox root = new VBox();
 		TextField settings = new TextField("Settings");
+		settings.setEditable(false);
+		TextField search = new TextField("Search");
+		TextField textSize = new TextField("Text Size");
+		TextField themes = new TextField("Themes");
+		TextField temperature = new TextField("Temperature");
+		TextField timeZone = new TextField("Time Zone");
+		//timeZone.setPrefWidth(100);
+		//timeZone.setPrefHeight(100);
+		TextField chooseHour = new TextField("24hr/12hr");
+		settingBox = new VBox(settings, search);
+		settingBox.setSpacing(20);
+		settingBoxTwo = new VBox(temperature, timeZone);
+		settingBoxTwo.setSpacing(20);
+		root = new VBox(settingBox, textSize, themes, settingBoxTwo, chooseHour);
 
-		VBox root = new VBox(settings);
+		root.setSpacing(4);
 
 		return new BorderPane(root);
 	}
