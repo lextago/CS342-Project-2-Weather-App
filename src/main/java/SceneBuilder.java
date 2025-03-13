@@ -1,7 +1,6 @@
 import javafx.scene.Scene;
 
 import javafx.scene.control.Button;
-import javafx.scene.text.*;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -82,26 +81,20 @@ public class SceneBuilder {
 	}
 
 	public static BorderPane settingsScreen(){
-		VBox settingBox = new VBox();
-		VBox settingBoxTwo = new VBox();
-		VBox root = new VBox();
-		TextField settings = new TextField("Settings");
-		settings.setEditable(false);
-		TextField search = new TextField("Search");
-		TextField textSize = new TextField("Text Size");
-		TextField themes = new TextField("Themes");
-		TextField temperature = new TextField("Temperature");
-		TextField timeZone = new TextField("Time Zone");
-		//timeZone.setPrefWidth(100);
-		//timeZone.setPrefHeight(100);
-		TextField chooseHour = new TextField("24hr/12hr");
-		settingBox = new VBox(settings, search);
-		settingBox.setSpacing(20);
-		settingBoxTwo = new VBox(temperature, timeZone);
-		settingBoxTwo.setSpacing(20);
-		root = new VBox(settingBox, textSize, themes, settingBoxTwo, chooseHour);
+		TextField settingsText = new TextField("Settings");
+		settingsText.setEditable(false);
+		TextField searchText = new TextField("Search");
+		TextField textSizeText = new TextField("Text Size");
+		TextField themesText = new TextField("Themes");
+		TextField temperatureText = new TextField("Temperature");
+		TextField timeZoneText = new TextField("Time Zone");
+		TextField chooseHourText = new TextField("24hr/12hr");
 
-		root.setSpacing(4);
+		VBox settingBoxOne = new VBox(settingsText);
+		VBox settingBoxTwo = new VBox(4, searchText, textSizeText, themesText, temperatureText);
+		VBox settingBoxThree = new VBox(4, timeZoneText, chooseHourText);
+
+		VBox root = new VBox(20, settingBoxOne, settingBoxTwo, settingBoxThree);
 
 		return new BorderPane(root);
 	}

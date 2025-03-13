@@ -52,6 +52,11 @@ public class JavaFX extends Application {
 		homeRoot.setBottom(navigationBar);
 
 		Scene home = new Scene(homeRoot,  360, 640);
+//		primaryStage.setMinWidth(360);
+//		primaryStage.setMinHeight(640);
+//		primaryStage.setMaxWidth(360);
+//		primaryStage.setMaxHeight(640);
+
 		primaryStage.setScene(home);
 		primaryStage.show();
 	}
