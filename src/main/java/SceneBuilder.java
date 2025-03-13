@@ -1,38 +1,100 @@
-import javafx.scene.Scene;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.layout.*;
 import weather.Period;
 import weather.WeatherAPI;
 
-import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 //This class builds each screen of the weather app inside a function. Each function
 //returns the screen as a BorderPane object to be used as the root for a Scene.
 public class SceneBuilder {
+	static Button textButtonExpanded; //change name
 
 	public static BorderPane homeScreen(){
-		TextField temperature, weather;
 		//int temp = WeatherAPI.getTodaysTemperature(77,70);
 		ArrayList<Period> forecast = WeatherAPI.getForecast("LOT",77,70);
 		if (forecast == null){
 			System.out.println("No forecast found");
 		}
-		temperature = new TextField();
-		weather = new TextField();
-		temperature.setText("Today's weather is: "+String.valueOf(forecast.get(0).temperature));
-		weather.setText(forecast.get(0).shortForecast);
+
+		//---elements for homeBoxOne (top portion of screen)
+
+		Label temperatureLabel = new Label();
+		Label weatherLabel = new Label();
+		temperatureLabel.setText("Today's weather is: "+String.valueOf(forecast.get(0).temperature));
+		weatherLabel.setText(forecast.get(0).shortForecast);
 
 //		MyWeatherAPI api = new MyWeatherAPI();
 //		System.out.println(Arrays.toString(api.getCoords()));
 
-		VBox root = new VBox(temperature,weather);
+		VBox homeBoxOneCenter = new VBox(temperatureLabel, weatherLabel);
+
+		BorderPane homeBoxOne = new BorderPane(homeBoxOneCenter);
+		homeBoxOne.setPrefHeight(300);
+		homeBoxOneCenter.setAlignment(Pos.CENTER);
+
+//		homeBoxOne.setBorder(new Border(new BorderStroke(Color.BLACK,
+//				BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+
+		//---elements for homeBoxTwo (lower portion of screen)
+
+		VBox homeBoxTwoLeft, homeBoxTwoRight;
+		ScrollPane hourlyForecastScroll = new ScrollPane();
+		VBox hourlyForecastBox = new VBox();
+
+		for(int i = 1; i <= 24; i++){
+			String textBody = "Text " + i;
+			Button textButton = new Button(textBody);
+			textButton.setPrefSize(200, 50);
+			textButton.setAlignment(Pos.CENTER_LEFT);
+			hourlyForecastBox.getChildren().add(textButton);
+
+			textButtonExpanded = textButton;
+			textButton.setOnAction(e-> {
+				if(textButton.getHeight() == 50){
+					textButton.setPrefHeight(100);
+					if(textButton != textButtonExpanded){
+						textButtonExpanded.setPrefHeight(50);
+					}
+					textButtonExpanded = (Button) e.getSource();
+				}else{
+					textButton.setPrefHeight(50);
+				}
+			});
+
+		}
+		hourlyForecastScroll.setContent(hourlyForecastBox);
+		hourlyForecastScroll.setPrefSize(220, 300);
+
+		TextField alertsText = new TextField("Alerts");
+		alertsText.setPrefSize(100, 200);
+		alertsText.setEditable(false);
+		alertsText.setAlignment(Pos.TOP_LEFT);
+
+		TextField image = new TextField("image");
+		image.setPrefSize(100, 100);
+
+		TextField descriptionText = new TextField("Description");
+		descriptionText.setPrefHeight(80);
+
+		homeBoxTwoLeft = new VBox(descriptionText, hourlyForecastScroll);
+		homeBoxTwoRight = new VBox(10, alertsText, image);
+		HBox homeBoxTwo = new HBox(10, homeBoxTwoLeft, homeBoxTwoRight);
+		homeBoxTwo.setAlignment(Pos.CENTER);
+
+		//---elements in BorderPane root (whole screen)
+
+		VBox centerRoot = new VBox(homeBoxOne);
+
+		BorderPane root = new BorderPane(centerRoot);
+		root.setPadding(new Insets(10));
+		root.setBottom(homeBoxTwo);
 
 		return new BorderPane(root);
 	}

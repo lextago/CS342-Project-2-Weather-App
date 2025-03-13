@@ -25,7 +25,7 @@ public class JavaFX extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		primaryStage.setTitle("I'm a professional Weather App!");
+		primaryStage.setTitle("Home Screen");
 
 		Button homeButton, dailyButton, trendsButton, settingsButton;
 
@@ -43,19 +43,19 @@ public class JavaFX extends Application {
 
 		navigationBar = new HBox(homeButton, dailyButton, trendsButton, settingsButton);
 
-		homeButton.setOnAction(e -> navigationBarHandler(e, SceneBuilder.homeScreen(), primaryStage));
-		dailyButton.setOnAction(e -> navigationBarHandler(e, SceneBuilder.dailyForecastScreen(), primaryStage));
-		trendsButton.setOnAction(e -> navigationBarHandler(e, SceneBuilder.weeklyTrendsScreen(), primaryStage));
-		settingsButton.setOnAction(e -> navigationBarHandler(e, SceneBuilder.settingsScreen(), primaryStage));
+		homeButton.setOnAction(e -> navigationBarHandler(e,  primaryStage, SceneBuilder.homeScreen(), "Home Screen"));
+		dailyButton.setOnAction(e -> navigationBarHandler(e, primaryStage, SceneBuilder.dailyForecastScreen(), "Daily Forecast"));
+		trendsButton.setOnAction(e -> navigationBarHandler(e,  primaryStage, SceneBuilder.weeklyTrendsScreen(), "Weekly Trends"));
+		settingsButton.setOnAction(e -> navigationBarHandler(e,  primaryStage, SceneBuilder.settingsScreen(), "Settings"));
 
 		BorderPane homeRoot = SceneBuilder.homeScreen();
 		homeRoot.setBottom(navigationBar);
 
 		Scene home = new Scene(homeRoot,  360, 640);
-//		primaryStage.setMinWidth(360);
-//		primaryStage.setMinHeight(640);
-//		primaryStage.setMaxWidth(360);
-//		primaryStage.setMaxHeight(640);
+		primaryStage.setMinWidth(360);
+		primaryStage.setMinHeight(640);
+		primaryStage.setMaxWidth(360);
+		primaryStage.setMaxHeight(640);
 
 		primaryStage.setScene(home);
 		primaryStage.show();
@@ -65,10 +65,11 @@ public class JavaFX extends Application {
 		Adds the navigation bar to the bottom of the BorderPane, uses that BorderPane as the root
 		for the next scene, then changes the stage's current scene to the next.
 	*/
-	private void navigationBarHandler(ActionEvent event, BorderPane root, Stage currentStage){
+	private void navigationBarHandler(ActionEvent event, Stage currentStage, BorderPane root, String title){
 		root.setBottom(navigationBar);
 
 		Scene nextScene = new Scene(root, 360, 640);
 		currentStage.setScene(nextScene);
+		currentStage.setTitle(title);
 	}
 }
