@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import weather.Period;
 import weather.WeatherAPI;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -37,25 +38,63 @@ public class SceneBuilder {
 	}
 
 	public static BorderPane dailyForecastScreen(){
+		VBox root = new VBox();
+		VBox days = new VBox();
 		TextField dailyForecast = new TextField("Daily Forecast");
 
-		VBox root = new VBox(dailyForecast);
+		TextField sevenDays = new TextField("7 Days");
+		sevenDays.setPrefSize(25,25);
+
+        TextField dayOne = new TextField("Day One");
+		dayOne.setPrefSize(60,60);
+
+		TextField dayTwo = new TextField("Day Two");
+		dayTwo.setPrefSize(60,60);
+
+		TextField dayThree = new TextField("Day Three");
+		dayThree.setPrefSize(60,60);
+
+		TextField dayFour = new TextField("Day Four");
+		dayFour.setPrefSize(60,60);
+
+		TextField dayFive = new TextField("Day Five");
+		dayFive.setPrefSize(60,60);
+
+		TextField daySix = new TextField("Day Six");
+		daySix.setPrefSize(60,60);
+
+		TextField daySeven = new TextField("Day Seven");
+		daySeven.setPrefSize(60,60);
+
+		days = new VBox(sevenDays, dayOne, dayTwo, dayThree, dayFour, dayFive, daySix, daySeven);
+		root = new VBox(dailyForecast, days);
+		root.setSpacing(60);
 
 		return new BorderPane(root);
 	}
 
 	public static BorderPane weeklyTrendsScreen(){
 		TextField weeklyTrends = new TextField("Weekly Trends");
-
 		VBox root = new VBox(weeklyTrends);
 
 		return new BorderPane(root);
 	}
 
 	public static BorderPane settingsScreen(){
-		TextField settings = new TextField("Settings");
+		TextField settingsText = new TextField("Settings");
+		settingsText.setEditable(false);
+		TextField searchText = new TextField("Search");
+		TextField textSizeText = new TextField("Text Size");
+		TextField themesText = new TextField("Themes");
+		TextField temperatureText = new TextField("Temperature");
+		TextField timeZoneText = new TextField("Time Zone");
+		TextField chooseHourText = new TextField("24hr/12hr");
 
-		VBox root = new VBox(settings);
+		VBox settingBoxOne = new VBox(settingsText);
+		VBox settingBoxTwo = new VBox(4, searchText, textSizeText, themesText, temperatureText);
+		VBox settingBoxThree = new VBox(4, timeZoneText, chooseHourText);
+
+		VBox root = new VBox(20, settingBoxOne, settingBoxTwo, settingBoxThree);
 
 		return new BorderPane(root);
 	}
