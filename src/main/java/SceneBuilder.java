@@ -1,17 +1,15 @@
-import javafx.scene.Scene;
+import javafx.collections.FXCollections;
 
-import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javafx.scene.layout.*;
 import weather.Period;
 import weather.WeatherAPI;
-
-import javax.swing.*;
+import javafx.scene.paint.Color;
+import javafx.geometry.Insets;
+import java.awt.*;
+import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 //This class builds each screen of the weather app inside a function. Each function
 //returns the screen as a BorderPane object to be used as the root for a Scene.
@@ -83,18 +81,59 @@ public class SceneBuilder {
 	public static BorderPane settingsScreen(){
 		TextField settingsText = new TextField("Settings");
 		settingsText.setEditable(false);
+
 		TextField searchText = new TextField("Search");
+
 		TextField textSizeText = new TextField("Text Size");
+		textSizeText.setEditable(false);
+
 		TextField themesText = new TextField("Themes");
+		themesText.setEditable(false);
+
 		TextField temperatureText = new TextField("Temperature");
+		temperatureText.setEditable(false);
+
 		TextField timeZoneText = new TextField("Time Zone");
+		timeZoneText.setEditable(false);
+
 		TextField chooseHourText = new TextField("24hr/12hr");
+		chooseHourText.setEditable(false);
+
+		String weekDays [] = {"4px", "8px", "12px", "16px", "20px"};
+		ComboBox weekDaysBox = new ComboBox(FXCollections.observableArrayList(weekDays));
+		weekDaysBox.setPrefWidth(300);
+
+		String allThemes [] = {"Matcha", "Cocoa", "Milk", "Coffee", "Ube"};
+		ComboBox themesBox = new ComboBox(FXCollections.observableArrayList(allThemes));
+		themesBox.setPrefWidth(300);
+
+		String temperatureTypes [] = {"Fahrenheit", "Celsius"};
+		ComboBox temperatureBox = new ComboBox(FXCollections.observableArrayList(temperatureTypes));
+		temperatureBox.setPrefWidth(300);
+
+		String timeZoneTypes [] = {"CST", "EST", "WST"};
+		ComboBox timeZoneBox = new ComboBox(FXCollections.observableArrayList(timeZoneTypes));
+		timeZoneBox.setPrefWidth(300);
+
+		String hourTypes [] = {"24hr", "12hr", "6hr"};
+		ComboBox hourBox = new ComboBox(FXCollections.observableArrayList(hourTypes));
+		hourBox.setPrefWidth(300);
+
+		HBox settingBoxOneHBox = new HBox(textSizeText, weekDaysBox);
+		HBox settingBoxTwoHBox = new HBox(themesText, themesBox);
+		HBox settingBoxThreeHBox = new HBox(temperatureText, temperatureBox);
+		HBox settingBoxFourHBox = new HBox(timeZoneText, timeZoneBox);
+		HBox settingBoxFiveHBox = new HBox(chooseHourText, hourBox);
 
 		VBox settingBoxOne = new VBox(settingsText);
-		VBox settingBoxTwo = new VBox(4, searchText, textSizeText, themesText, temperatureText);
-		VBox settingBoxThree = new VBox(4, timeZoneText, chooseHourText);
+		VBox settingBoxTwo = new VBox(4, searchText, settingBoxOneHBox, settingBoxTwoHBox, settingBoxThreeHBox);
+		VBox settingBoxThree = new VBox(4, settingBoxFourHBox, settingBoxFiveHBox);
+
+		BackgroundFill background_fill = new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY);
+		Background background = new Background(background_fill);
 
 		VBox root = new VBox(20, settingBoxOne, settingBoxTwo, settingBoxThree);
+		root.setBackground(background);
 
 		return new BorderPane(root);
 	}
