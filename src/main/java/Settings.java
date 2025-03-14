@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 public class Settings extends SceneBuilder{
-	public static BorderPane getScreen() {
+	public static BorderPane getScene() {
 		// Creates all text
 
 		Label settingsLabel = new Label("Settings");
@@ -31,9 +31,9 @@ public class Settings extends SceneBuilder{
 
 		// Creates all dropdowns
 
-		String[] weekDays = {"4px", "8px", "12px", "16px", "20px"};
-		ComboBox weekDaysBox = new ComboBox(FXCollections.observableArrayList(weekDays));
-		weekDaysBox.setPrefWidth(300);
+		String[] fontSize = {"S", "M", "L"};
+		ComboBox fontSizeBox = new ComboBox(FXCollections.observableArrayList(fontSize));
+		fontSizeBox.setPrefWidth(100);
 
 		String[] allThemes = {"Matcha", "Cocoa", "Milk", "Coffee", "Ube"};
 		ComboBox themesBox = new ComboBox(FXCollections.observableArrayList(allThemes));
@@ -41,11 +41,11 @@ public class Settings extends SceneBuilder{
     
 		String[] temperatureTypes = {"Fahrenheit", "Celsius"};
 		ComboBox temperatureBox = new ComboBox(FXCollections.observableArrayList(temperatureTypes));
-		temperatureBox.setPrefWidth(300);
+		temperatureBox.setPrefWidth(100);
 
 		String[] timeZoneTypes = {"CST", "EST", "WST"};
 		ComboBox timeZoneBox = new ComboBox(FXCollections.observableArrayList(timeZoneTypes));
-		timeZoneBox.setPrefWidth(300);
+		timeZoneBox.setPrefWidth(100);
 
 		String[] hourTypes = {"24hr", "12hr", "6hr"};
 		ComboBox hourBox = new ComboBox(FXCollections.observableArrayList(hourTypes));

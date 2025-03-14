@@ -25,6 +25,7 @@ public class JavaFX extends Application {
 		primaryStage.setTitle("Home Screen");
 		SceneBuilder sceneBuilder = new SceneBuilder();
 		sceneBuilder.setStage(primaryStage);
+		mainStage = primaryStage;
 
 		DailyForecast dailyForecast = new DailyForecast();
 		WeeklyTrends weeklyTrends = new WeeklyTrends();
