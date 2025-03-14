@@ -2,11 +2,13 @@ import hourlyWeather.HourlyPeriod;
 import hourlyWeather.HourlyProbabilityOfPrecipitation;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import weather.Period;
 import weather.WeatherAPI;
 
@@ -14,10 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class HomeScreen {
+public class HomeScreen extends SceneBuilder{
 	static Button hourlyStatusExpanded; //static global variable used for lambda method which requires 'final' variables
 
-	public static BorderPane getScreen(){
+	public static BorderPane getScene(){
 		//int temp = WeatherAPI.getTodaysTemperature(77,70);
 		Period currentForecast = WeatherAPI.getForecast("LOT", 77, 70).get(0);
 		ArrayList<HourlyPeriod> hourlyForecast = MyWeatherAPI.getHourlyForecast("LOT",77,70);
@@ -34,6 +36,13 @@ public class HomeScreen {
 		VBox homeBoxOneCenter; //Root for the top portion of the screen
 
 		Button locationButton = new Button("Chicago IL");
+
+		locationButton.setOnAction(e -> {
+			BorderPane root = LocationDetails.getScene();
+			Scene nextScene = new Scene(root, 360, 640);
+			mainStage.setScene(nextScene);
+			mainStage.setTitle("LocationDetails");
+		});
 
 		Label temperatureLabel = new Label();
 		Label weatherLabel = new Label();

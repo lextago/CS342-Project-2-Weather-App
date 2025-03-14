@@ -7,8 +7,8 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
-public class Settings {
-	public static BorderPane getScreen() {
+public class Settings extends SceneBuilder{
+	public static BorderPane getScene() {
 		Label settingsLabel = new Label("Settings");
 		settingsLabel.setFont(new Font("Inter", 50));
 
@@ -29,23 +29,23 @@ public class Settings {
 		TextField chooseHourText = new TextField("24hr/12hr");
 		chooseHourText.setEditable(false);
 
-		String weekDays[] = {"4px", "8px", "12px", "16px", "20px"};
+		String[] weekDays = {"4px", "8px", "12px", "16px", "20px"};
 		ComboBox weekDaysBox = new ComboBox(FXCollections.observableArrayList(weekDays));
 		weekDaysBox.setPrefWidth(300);
 
-		String allThemes[] = {"Matcha", "Cocoa", "Milk", "Coffee", "Ube"};
+		String[] allThemes = {"Matcha", "Cocoa", "Milk", "Coffee", "Ube"};
 		ComboBox themesBox = new ComboBox(FXCollections.observableArrayList(allThemes));
 		themesBox.setPrefWidth(300);
 
-		String temperatureTypes[] = {"Fahrenheit", "Celsius"};
+		String[] temperatureTypes = {"Fahrenheit", "Celsius"};
 		ComboBox temperatureBox = new ComboBox(FXCollections.observableArrayList(temperatureTypes));
 		temperatureBox.setPrefWidth(300);
 
-		String timeZoneTypes[] = {"CST", "EST", "WST"};
+		String[] timeZoneTypes = {"CST", "EST", "WST"};
 		ComboBox timeZoneBox = new ComboBox(FXCollections.observableArrayList(timeZoneTypes));
 		timeZoneBox.setPrefWidth(300);
 
-		String hourTypes[] = {"24hr", "12hr", "6hr"};
+		String[] hourTypes = {"24hr", "12hr", "6hr"};
 		ComboBox hourBox = new ComboBox(FXCollections.observableArrayList(hourTypes));
 		hourBox.setPrefWidth(300);
 

@@ -2,8 +2,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 
-public class WeeklyTrends {
-	public static BorderPane getScreen(){
+public class WeeklyTrends extends SceneBuilder {
+	public static BorderPane getScene(){
 		TextField weeklyTrends = new TextField("Weekly Trends");
 		VBox root = new VBox(weeklyTrends);
 
