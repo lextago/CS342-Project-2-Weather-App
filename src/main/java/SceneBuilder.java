@@ -157,7 +157,3 @@ public class SceneBuilder {
 		TextField hourlyForecast = new TextField("Hourly Forecast");
 
 		VBox root = new VBox(hourlyForecast);
-
-		return new BorderPane(root);
-	}
-}
