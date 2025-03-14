@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class HomeScreen {
-	static Button hourlyStatusExpanded;
+	static Button hourlyStatusExpanded; //static global variable used for lambda method which requires 'final' variables
 
 	public static BorderPane getScreen(){
 		//int temp = WeatherAPI.getTodaysTemperature(77,70);
