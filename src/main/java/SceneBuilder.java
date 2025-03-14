@@ -1,13 +1,19 @@
 import javafx.collections.FXCollections;
 
+import javafx.scene.Group;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
+import org.w3c.dom.Text;
 import weather.Period;
 import weather.WeatherAPI;
 import javafx.scene.paint.Color;
 import javafx.geometry.Insets;
-import java.awt.*;
+
+import javax.swing.*;
 import java.io.FileInputStream;
 import java.util.ArrayList;
 
@@ -79,13 +85,13 @@ public class SceneBuilder {
 	}
 
 	public static BorderPane settingsScreen(){
-		TextField settingsText = new TextField("Settings");
-		settingsText.setEditable(false);
+		Label settingsLabel = new Label("Settings");
+		settingsLabel.setFont(new Font("Inter", 50));
 
 		TextField searchText = new TextField("Search");
 
 		TextField textSizeText = new TextField("Text Size");
-		textSizeText.setEditable(false);
+		searchText.setEditable(false);
 
 		TextField themesText = new TextField("Themes");
 		themesText.setEditable(false);
@@ -125,17 +131,18 @@ public class SceneBuilder {
 		HBox settingBoxFourHBox = new HBox(timeZoneText, timeZoneBox);
 		HBox settingBoxFiveHBox = new HBox(chooseHourText, hourBox);
 
-		VBox settingBoxOne = new VBox(settingsText);
-		VBox settingBoxTwo = new VBox(4, searchText, settingBoxOneHBox, settingBoxTwoHBox, settingBoxThreeHBox);
+		VBox settingBoxOne = new VBox(4, searchText);
+		VBox settingBoxTwo = new VBox(4, settingBoxOneHBox, settingBoxTwoHBox, settingBoxThreeHBox);
 		VBox settingBoxThree = new VBox(4, settingBoxFourHBox, settingBoxFiveHBox);
 
 		BackgroundFill background_fill = new BackgroundFill(Color.PINK, CornerRadii.EMPTY, Insets.EMPTY);
 		Background background = new Background(background_fill);
 
-		VBox root = new VBox(20, settingBoxOne, settingBoxTwo, settingBoxThree);
+		VBox root = new VBox(20, settingsLabel, settingBoxOne, settingBoxTwo, settingBoxThree);
 		root.setBackground(background);
 
-		return new BorderPane(root);
+		BorderPane borderPane = new BorderPane(root);
+		return borderPane;
 	}
 
 	public static BorderPane locationDetailsScreen(){
