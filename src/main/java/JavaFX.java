@@ -12,7 +12,8 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 
 public class JavaFX extends Application {
-	HBox navigationBar;
+	private static Stage mainStage;
+	private static HBox navigationBar;
 
 	public static void main(String[] args) {
 
@@ -20,8 +21,14 @@ public class JavaFX extends Application {
 	}
 
 	@Override
-	public void start(Stage primaryStage) throws Exception {
+	public void start(Stage primaryStage){
 		primaryStage.setTitle("Home Screen");
+		SceneBuilder sceneBuilder = new SceneBuilder();
+		sceneBuilder.setStage(primaryStage);
+
+		DailyForecast dailyForecast = new DailyForecast();
+		WeeklyTrends weeklyTrends = new WeeklyTrends();
+		Settings settings = new Settings();
 
 		Button homeButton, dailyButton, trendsButton, settingsButton;
 
@@ -39,25 +46,23 @@ public class JavaFX extends Application {
 
 		navigationBar = new HBox(homeButton, dailyButton, trendsButton, settingsButton);
 
-		homeButton.setOnAction(e -> navigationBarHandler(e,  primaryStage, HomeScreen.getScreen(), "Home Screen"));
-		dailyButton.setOnAction(e -> navigationBarHandler(e, primaryStage, DailyForecast.getScreen(), "Daily Forecast"));
-		trendsButton.setOnAction(e -> navigationBarHandler(e,  primaryStage, WeeklyTrends.getScreen(), "Weekly Trends"));
-		settingsButton.setOnAction(e -> navigationBarHandler(e,  primaryStage, Settings.getScreen(), "Settings"));
+		homeButton.setOnAction(e -> navigationBarHandler(e, HomeScreen.getScene(), "Home Screen"));
+		dailyButton.setOnAction(e -> navigationBarHandler(e, DailyForecast.getScene(), "Daily Forecast"));
+		trendsButton.setOnAction(e -> navigationBarHandler(e, WeeklyTrends.getScene(), "Weekly Trends"));
+		settingsButton.setOnAction(e -> navigationBarHandler(e, Settings.getScene(), "Settings"));
 
-		BorderPane homeRoot = HomeScreen.getScreen();
+		BorderPane homeRoot = HomeScreen.getScene();
 		homeRoot.setBottom(navigationBar);
 
 		Scene home = new Scene(homeRoot,  360, 640);
-		primaryStage.setMinWidth(370);
-		primaryStage.setMinHeight(650);
-		primaryStage.setMaxWidth(370);
-		primaryStage.setMaxHeight(650);
+
+		primaryStage.setResizable(false);
 
 		primaryStage.setScene(home);
 		primaryStage.show();
 
 		ArrayList<HourlyPeriod> hourlyPeriods = MyWeatherAPI.getHourlyForecast("LOT",77,70);
-		System.out.println(hourlyPeriods.size());
+//		System.out.println(hourlyPeriods.size());
 
 	}
 
@@ -65,11 +70,11 @@ public class JavaFX extends Application {
 		Adds the navigation bar to the bottom of the BorderPane, uses that BorderPane as the root
 		for the next scene, then changes the stage's current scene to the next.
 	*/
-	private void navigationBarHandler(ActionEvent event, Stage currentStage, BorderPane root, String title){
+	private void navigationBarHandler(ActionEvent event, BorderPane root, String title){
 		root.setBottom(navigationBar);
 
 		Scene nextScene = new Scene(root, 360, 640);
-		currentStage.setScene(nextScene);
-		currentStage.setTitle(title);
+		mainStage.setScene(nextScene);
+		mainStage.setTitle(title);
 	}
 }

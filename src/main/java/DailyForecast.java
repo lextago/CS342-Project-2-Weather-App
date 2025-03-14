@@ -9,8 +9,8 @@ import javafx.scene.text.Font;
 import weather.Period;
 import weather.WeatherAPI;
 
-public class DailyForecast {
-	public static BorderPane getScreen(){
+public class DailyForecast extends SceneBuilder{
+	public static BorderPane getScene(){
 		VBox root = new VBox();
 		VBox days = new VBox();
 
