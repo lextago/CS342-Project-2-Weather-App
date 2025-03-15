@@ -2,11 +2,15 @@ import hourlyWeather.HourlyPeriod;
 import javafx.application.Application;
 
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 
 import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -47,12 +51,12 @@ public class JavaFX extends Application {
 
 		navigationBar = new HBox(homeButton, dailyButton, trendsButton, settingsButton);
 
-		homeButton.setOnAction(e -> navigationBarHandler(e, HomeScreen.getScene(), "Home Screen"));
-		dailyButton.setOnAction(e -> navigationBarHandler(e, DailyForecast.getScene(), "Daily Forecast"));
-		trendsButton.setOnAction(e -> navigationBarHandler(e, WeeklyTrends.getScene(), "Weekly Trends"));
-		settingsButton.setOnAction(e -> navigationBarHandler(e, Settings.getScene(), "Settings"));
+		homeButton.setOnAction(e -> navigationBarHandler(e, HomeScreen.getScreen(), "Home Screen"));
+		dailyButton.setOnAction(e -> navigationBarHandler(e, DailyForecast.getScreen(), "Daily Forecast"));
+		trendsButton.setOnAction(e -> navigationBarHandler(e, WeeklyTrends.getScreen(), "Weekly Trends"));
+		settingsButton.setOnAction(e -> navigationBarHandler(e, Settings.getScreen(), "Settings"));
 
-		BorderPane homeRoot = HomeScreen.getScene();
+		BorderPane homeRoot = HomeScreen.getScreen();
 		homeRoot.setBottom(navigationBar);
 
 		Scene home = new Scene(homeRoot,  360, 640);
@@ -77,5 +81,27 @@ public class JavaFX extends Application {
 		Scene nextScene = new Scene(root, 360, 640);
 		mainStage.setScene(nextScene);
 		mainStage.setTitle(title);
+	}
+
+	public void popupErrorMsg() {
+		Stage myDialog = new Stage();
+
+
+		Button okButton = new Button("Ok");
+		okButton.setOnAction(e-> {
+			myDialog.close();
+		});
+
+		VBox root = new VBox(30, okButton);
+		root.setAlignment(Pos.CENTER);
+		root.setPadding(new Insets(10));
+
+		Scene myDialogScene = new Scene(root, 300, 250);
+
+		myDialog.setScene(myDialogScene);
+
+		myDialog.initOwner(mainStage);
+		myDialog.initModality(Modality.WINDOW_MODAL);
+		myDialog.showAndWait();
 	}
 }
