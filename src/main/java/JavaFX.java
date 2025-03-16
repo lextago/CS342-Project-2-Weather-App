@@ -12,8 +12,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class JavaFX extends Application {
 
@@ -41,8 +43,15 @@ public class JavaFX extends Application {
 		primaryStage.setScene(home);
 		primaryStage.show();
 
-		ArrayList<HourlyPeriod> hourlyPeriods = MyWeatherAPI.getHourlyForecast("LOT",77,70);
-//		System.out.println(hourlyPeriods.size());
+		ArrayList<Pair<String, double[]>> minAndMax = MyWeatherAPI.getMinAndMaxTemperatures("LOT", 77, 70);
+		for(Pair<String, double[]> pair : minAndMax){
+			System.out.println(pair.getKey() + " " + Arrays.toString(pair.getValue()));
+		}
+
+		ArrayList<Pair<String, Integer>> rainChances = MyWeatherAPI.getProbabilityOfPrecipitation("LOT", 77, 70);
+		for(Pair<String, Integer> pair : rainChances){
+			System.out.println(pair.getKey() + " " + pair.getValue());
+		}
 
 	}
 }
