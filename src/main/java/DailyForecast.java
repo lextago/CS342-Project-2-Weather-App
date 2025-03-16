@@ -79,6 +79,7 @@ public class DailyForecast extends SceneBuilder{
 
 		VBox root = new VBox(10);
 		root.setAlignment(Pos.CENTER);
+
 		ComboBox<String> numDaysChoices = new ComboBox<>();
 		VBox textFieldsHolder = new VBox(5);
 		textFieldsHolder.setAlignment(Pos.CENTER);
