@@ -6,6 +6,7 @@ public class SceneBuilder {
 
 	public static String city;
 	public static String state;
+	public static String location;
 	public static double longitude;
 	public static double latitude;
 	public static String region;
@@ -15,6 +16,7 @@ public class SceneBuilder {
 	public SceneBuilder(){
 		city = "Chicago";
 		state = "Illinois";
+		location = "Chicago, Illinois";
 		region = "LOT";
 		gridX = 77;
 		gridY = 70;
@@ -26,8 +28,8 @@ public class SceneBuilder {
 		SceneBuilder.gridY = gridY;
 	}
 
-	public String getPlace(){
-		return city + "," + state;
+	public String getLocation(){
+		return location;
 	}
 
 	public void setStage(Stage stage) {
