@@ -15,6 +15,7 @@ import weather.WeatherAPI;
 
 import javax.swing.*;
 import java.text.SimpleDateFormat;
+import java.time.format.TextStyle;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -77,12 +78,10 @@ public class DailyForecast extends SceneBuilder{
 		// print the hourly times.
 		// Print their forecasts.
 
-		VBox root = new VBox(10);
-		root.setAlignment(Pos.CENTER);
+		VBox root = new VBox(5);
 
 		ComboBox<String> numDaysChoices = new ComboBox<>();
-		VBox textFieldsHolder = new VBox(5);
-		textFieldsHolder.setAlignment(Pos.CENTER);
+		VBox textFieldsHolder = new VBox(1);
 
 		numDaysChoices.getItems().addAll("1 Day", "3 Day", "5 Day", "7 Day");
 
@@ -92,21 +91,32 @@ public class DailyForecast extends SceneBuilder{
 
 			textFieldsHolder.getChildren().clear();
 			for (int i = 0; i < number; i++) {
-				textFieldsHolder.getChildren().add(new TextField("Day" + (i + 1)));
+				TextField field = new TextField("Sat " + (i + 1) + "/" + (i+2));
+				field.setEditable(false);
+				field.setFont(new Font("Inter", 20));
+				//field.setStyle("-fx-background-color: #588157;");
+				field.setStyle("-fx-text-fill: #ffffff; -fx-background-color: rgba(88,129,87,0.8);");
+				field.setBorder(Border.stroke(Color.BLACK));
+				field.setPrefSize(160,50);
+				textFieldsHolder.getChildren().add(field);
 			}
 		});
 
 		root.getChildren().addAll(numDaysChoices, textFieldsHolder);
+		BorderPane rootPane = new BorderPane(root);
+		rootPane.setPrefWidth(350);
+		HBox hBox = new HBox(rootPane);
+		hBox.setAlignment(Pos.CENTER);
 
 		Label dailyForecast = new Label("Daily Forecast");
 		dailyForecast.setTextFill(Color.rgb(255,255,255));
 		dailyForecast.setFont(new Font("Inter", 40));
 		BorderPane dailyForecastPane = new BorderPane(dailyForecast);
 
-		BackgroundFill background_fill = new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY);
+		BackgroundFill background_fill = new BackgroundFill(Color.rgb(160,255,161), CornerRadii.EMPTY, Insets.EMPTY);
 		Background background = new Background(background_fill);
 
-		root = new VBox(25, dailyForecastPane, root);
+		root = new VBox(30, dailyForecastPane, hBox);
 		root.setBackground(background);
 
 		return new BorderPane(root);
