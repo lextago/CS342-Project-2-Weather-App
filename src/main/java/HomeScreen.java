@@ -24,8 +24,8 @@ public class HomeScreen extends SceneBuilder{
 
 	public static BorderPane getScreen(){
 		//int temp = WeatherAPI.getTodaysTemperature(77,70);
-		currentForecast = WeatherAPI.getForecast("LOT", 77, 70).get(0);
-		hourlyForecast = MyWeatherAPI.getHourlyForecast("LOT",77,70);
+		currentForecast = WeatherAPI.getForecast(region, gridX, gridY).get(0);
+		hourlyForecast = MyWeatherAPI.getHourlyForecast(region,gridX,gridY);
 		if (hourlyForecast == null){
 			System.out.println("No forecast found");
 		}
@@ -120,10 +120,11 @@ public class HomeScreen extends SceneBuilder{
 			LocationDetails locationScreen = new LocationDetails(locationDialog);
 			BorderPane root = LocationDetails.getScreen();
 
-			Scene nextScene = new Scene(root, 360, 480);
+			Scene nextScene = new Scene(root, 315, 560);
 
 			locationDialog.setScene(nextScene);
 			locationDialog.setTitle("LocationDetails");
+			locationDialog.setResizable(false);
 
 			locationDialog.initOwner(mainStage);
 			locationDialog.initModality(Modality.WINDOW_MODAL);
