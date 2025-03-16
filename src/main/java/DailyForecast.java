@@ -6,11 +6,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import weather.Period;
-import weather.WeatherAPI;
 
 public class DailyForecast extends SceneBuilder{
-	public static BorderPane getScene(){
+	public static BorderPane getScreen(){
 		VBox root = new VBox();
 		VBox days = new VBox();
 
