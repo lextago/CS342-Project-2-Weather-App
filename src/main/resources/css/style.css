@@ -1,0 +1,9 @@
+#hourlyButton:hover {
+    /*-fx-default-button: red;*/
+    -fx-background-color: red;
+    /*-fx-text-fill: white;*/
+}
+
+/*.root {*/
+/*    -fx-default-button: rgb(100, 232, 232);*/
+/*}*/

@@ -3,10 +3,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import weather.Period;
@@ -17,14 +18,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class HomeScreen extends SceneBuilder{
-	private static Period currentForecast;
 	private static ArrayList<HourlyPeriod> hourlyForecast;
 
 	private static Button hourlyStatusExpanded; //static global variable used for lambda method which requires 'final' variables
 
 	public static BorderPane getScreen(){
 		//int temp = WeatherAPI.getTodaysTemperature(77,70);
-		currentForecast = WeatherAPI.getForecast(region, gridX, gridY).get(0);
+		Period currentForecast = WeatherAPI.getForecast(region, gridX, gridY).get(0);
 		hourlyForecast = MyWeatherAPI.getHourlyForecast(region,gridX,gridY);
 		if (hourlyForecast == null){
 			System.out.println("No forecast found");
@@ -40,11 +40,10 @@ public class HomeScreen extends SceneBuilder{
 
 		Button locationButton = getLocationButton();
 
-		Label temperatureLabel = new Label();
-		Label weatherLabel = new Label();
-		temperatureLabel.setText(String.valueOf(hourlyForecast.get(0).temperature));
-		temperatureLabel.setFont(new Font(50));
-		weatherLabel.setText(hourlyForecast.get(0).shortForecast);
+		Label temperatureLabel = new Label(String.valueOf(hourlyForecast.get(0).temperature));
+		Label weatherLabel = new Label(hourlyForecast.get(0).shortForecast);
+		temperatureLabel.setFont(Font.font("Verdana", FontWeight.BOLD,50));
+		temperatureLabel.setTextFill(Color.rgb(255,255,255));
 
 		homeBoxOneTop = new HBox(locationButton);
 		homeBoxOneTop.setAlignment(Pos.CENTER);
@@ -56,9 +55,6 @@ public class HomeScreen extends SceneBuilder{
 		homeBoxOne = new BorderPane(homeBoxOneCenter);
 		homeBoxOne.setPrefHeight(300);
 		homeBoxOne.setTop(homeBoxOneTop);
-
-//		homeBoxOne.setBorder(new Border(new BorderStroke(Color.BLACK,
-//				BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
 
 		//---elements for homeBoxTwo (lower portion of screen)
 		VBox homeBoxTwoLeft, homeBoxTwoRight; //The bottom half of the screen is split into a left and right component
@@ -72,11 +68,11 @@ public class HomeScreen extends SceneBuilder{
 		todayWeatherText = new TextField("Today's Weather");
 		todayWeatherText.setEditable(false);
 		todayWeatherText.setFont(Font.font("Verdana", 14));
-		todayWeatherText.setMaxSize(204,18);
+		todayWeatherText.setMaxSize(220,18);
 
 		descriptionText = new TextArea(currentForecast.detailedForecast);
 		descriptionText.setEditable(false);
-		descriptionText.setMaxSize(204, 70);
+		descriptionText.setMaxSize(220, 70);
 		descriptionText.setWrapText(true);
 		descriptionText.setFont(Font.font("Verdana", 10));
 
@@ -104,8 +100,12 @@ public class HomeScreen extends SceneBuilder{
 		VBox centerRoot = new VBox(homeBoxOne);
 
 		BorderPane root = new BorderPane(centerRoot);
-		root.setPadding(new Insets(10));
+		root.setPadding(new Insets(10, 10, 0, 10));
 		root.setBottom(homeBoxTwo); //aligns homeBoxTwo to the bottom of the screen
+
+		Image homeBackground = new Image("/images/matcha-background.jpg", 360, 640, false, true);
+		BackgroundImage backgroundImage = new BackgroundImage(homeBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
+		root.setBackground(new Background(backgroundImage));
 
 		return new BorderPane(root);
 	}
@@ -113,6 +113,8 @@ public class HomeScreen extends SceneBuilder{
 	//Creates dialog window to prompt user for location
 	private static Button getLocationButton(){
 		Button locationButton = new Button(getLocation());
+		locationButton.setPrefSize(150,40);
+		locationButton.setFont(Font.font("Verdana", FontWeight.SEMI_BOLD, 14));
 
 		locationButton.setOnAction(e -> {
 
@@ -144,9 +146,10 @@ public class HomeScreen extends SceneBuilder{
 		ArrayList<String> hourlyLabels = new ArrayList<>();
 		ArrayList<String> hourlyExtendedLabels = new ArrayList<>();
 
-		for(int i = 1; i <= 24; i++){ //Creates 24 buttons to display the hourly forecast
+		for(int i = 0; i <= 24; i++){ //Creates 24 buttons to display the hourly forecast
 			//Converts Date object into "hh a" (hour am/pm) format
 			HourlyPeriod currentPeriod = hourlyForecast.get(i);
+
 			Date currentHour = currentPeriod.startTime;
 			SimpleDateFormat localDateFormat = new SimpleDateFormat("hh a");
 			String hourTime = localDateFormat.format(currentHour);
@@ -157,6 +160,10 @@ public class HomeScreen extends SceneBuilder{
 			Button hourlyStatusButton = new Button(textBody);
 			hourlyStatusButton.setPrefSize(204, 50);
 			hourlyStatusButton.setAlignment(Pos.TOP_LEFT);
+
+//			hourlyStatusButton.setBackground(new Background(new BackgroundFill(Color.rgb(255,100,200),null,null)));
+//			hourlyStatusButton.setStyle("-fx-background-color: rgb(0, 232, 232);");
+			hourlyStatusButton.setId("hourlyButton");
 
 			hourlyForecastBox.getChildren().add(hourlyStatusButton);
 
