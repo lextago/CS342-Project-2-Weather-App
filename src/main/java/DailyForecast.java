@@ -10,8 +10,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import weather.Period;
-import weather.WeatherAPI;
 
 import javax.swing.*;
 import java.text.SimpleDateFormat;
@@ -20,7 +18,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DailyForecast extends SceneBuilder{
-	public static BorderPane getScene(){
+	public static BorderPane getScreen(){
 		//https://api.weather.gov/gridpoints/LOT/77,70/forecast/hourly
 
 		//Testing!!!
