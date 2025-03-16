@@ -133,6 +133,96 @@ public class MyWeatherAPI extends WeatherAPI {
 		return gridPair;
 	}
 
+	public static ArrayList<Pair<String, double[]>> getMinAndMaxTemperatures(String region, int gridx, int gridy){
+		String requestString = "https://api.weather.gov/gridpoints/" + region + "/" + gridx + "," + gridy;
+
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(requestString))
+				//.method("GET", HttpRequest.BodyPublishers.noBody())
+				.build();
+		HttpResponse<String> response = null;
+		try {
+			response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		ArrayList<Pair<String, double[]>> minAndMaxTemps = new ArrayList<>();
+		try{
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode root = mapper.readTree(response.body());
+
+			for(int i = 0; i < 8; i++){
+				JsonNode dateNode = root.at("/properties/maxTemperature/values/" + i + "/validTime");
+				JsonNode minNode = root.at("/properties/minTemperature/values/" + i + "/value");
+				JsonNode maxNode = root.at("/properties/maxTemperature/values/" + i + "/value");
+
+				String dateString = dateNode.asText();
+				double minTemp = minNode.asDouble();
+				double maxTemp = maxNode.asDouble();
+
+				Pair<String, double[]> minAndMaxTemp = new Pair<>(dateString, new double[]{minTemp, maxTemp});
+				minAndMaxTemps.add(minAndMaxTemp);
+			}
+
+		}catch (JsonProcessingException e){
+			e.printStackTrace();
+		}
+
+		if(minAndMaxTemps.isEmpty()){
+			System.err.println("Failed to parse properties JSon");
+		}
+
+		return minAndMaxTemps;
+	}
+
+	public static ArrayList<Pair<String, Integer>> getProbabilityOfPrecipitation(String region, int gridx, int gridy){
+		String requestString = "https://api.weather.gov/gridpoints/" + region + "/" + gridx + "," + gridy;
+
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(requestString))
+				//.method("GET", HttpRequest.BodyPublishers.noBody())
+				.build();
+		HttpResponse<String> response = null;
+		try {
+			response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		ArrayList<Pair<String, Integer>> precipitationProbabilities = new ArrayList<>();
+		try{
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode root = mapper.readTree(response.body());
+
+			Iterator<JsonNode> iterator = root.at("/properties/probabilityOfPrecipitation/values").elements();
+
+			int i = 0;
+			while(iterator.hasNext()){
+				JsonNode dateNode = root.at("/properties/probabilityOfPrecipitation/values/" + i + "/validTime");
+				JsonNode precipitationNode = root.at("/properties/probabilityOfPrecipitation/values/" + i + "/value");
+
+				String dateString = dateNode.asText();
+				int rainChance = precipitationNode.asInt();
+
+				Pair<String, Integer> probabilityOfPrecipitation = new Pair<>(dateString, rainChance);
+				precipitationProbabilities.add(probabilityOfPrecipitation);
+
+				iterator.next();
+				i++;
+			}
+
+		}catch (JsonProcessingException e){
+			e.printStackTrace();
+		}
+
+		if(precipitationProbabilities.isEmpty()){
+			System.err.println("Failed to parse properties JSon");
+		}
+
+		return precipitationProbabilities;
+	}
+
 	//Extending from the WeatherAPI class, retrieves the forecast for each hourly period instead of every 12-hour period.
 	public static ArrayList<HourlyPeriod> getHourlyForecast(String region, int gridx, int gridy) {
 		HttpRequest request = HttpRequest.newBuilder()
