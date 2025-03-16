@@ -110,8 +110,9 @@ public class HomeScreen extends SceneBuilder{
 		return new BorderPane(root);
 	}
 
+	//Creates dialog window to prompt user for location
 	private static Button getLocationButton(){
-		Button locationButton = new Button("Location");
+		Button locationButton = new Button(getLocation());
 
 		locationButton.setOnAction(e -> {
 
@@ -127,7 +128,7 @@ public class HomeScreen extends SceneBuilder{
 			locationDialog.setResizable(false);
 
 			locationDialog.initOwner(mainStage);
-			locationDialog.initModality(Modality.WINDOW_MODAL);
+			locationDialog.initModality(Modality.WINDOW_MODAL); //prevents user interaction with main stage until the dialog window has closed
 			locationDialog.showAndWait();
 		});
 

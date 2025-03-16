@@ -204,7 +204,8 @@ public class LocationDetails extends SceneBuilder{
 				Pair<String, int[]> buttonInfo = gridpoints.get(index);
 
 				//this sets the location for the whole app
-				setLocation(buttonInfo.getKey(), buttonInfo.getValue()[0], buttonInfo.getValue()[1]);
+				setLocation(coordinates.get(index).getKey());
+				setGridpoint(buttonInfo.getKey(), buttonInfo.getValue()[0], buttonInfo.getValue()[1]);
 
 				//prepares the home screen to send the user back
 				NavigationBar navBar = new NavigationBar(mainStage);

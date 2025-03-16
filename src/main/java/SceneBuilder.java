@@ -1,4 +1,3 @@
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class SceneBuilder {
@@ -22,13 +21,17 @@ public class SceneBuilder {
 		gridY = 70;
 	}
 
-	public static void setLocation(String region, int gridX, int gridY){
+	public static void setGridpoint(String region, int gridX, int gridY){
 		SceneBuilder.region = region;
 		SceneBuilder.gridX = gridX;
 		SceneBuilder.gridY = gridY;
 	}
 
-	public String getLocation(){
+	public static void setLocation(String location) {
+		SceneBuilder.location = location;
+	}
+
+	public static String getLocation(){
 		return location;
 	}
 

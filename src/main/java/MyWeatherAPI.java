@@ -8,7 +8,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class MyWeatherAPI extends WeatherAPI {
 
+	//Retrieves coordinates from geocoding a location (basically converting location to coordinates) using Mapbox
 	public static ArrayList<Pair<String, Double[]>> getCoords(String city, String state){
 		city = city.replace(" ", "&");
 		state = state.replace(" ", "&");
@@ -25,8 +25,6 @@ public class MyWeatherAPI extends WeatherAPI {
 
 		System.out.println(requestString);
 
-		//https://api.mapbox.com/search/geocode/v6/forward?place=&region=&country=&access_token=
-		//https://api.mapbox.com/search/geocode/v6/forward?country=us&address_number=1600&street=pennsylvania%20ave%20nw&postcode=20500&place=Washington%20dc&access_token=???
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(requestString))
 				//.method("GET", HttpRequest.BodyPublishers.noBody())
@@ -45,9 +43,9 @@ public class MyWeatherAPI extends WeatherAPI {
 
 			Iterator<JsonNode> iterator = root.at("/features").elements();
 			int index = 0;
-			while(iterator.hasNext()){
+			while(iterator.hasNext()){ //iterates through list of locations
 				JsonNode countryNode = root.at("/features/" + index + "/properties/context/country/name");
-				if(!countryNode.asText().equals("United States")){
+				if(!countryNode.asText().equals("United States")){ //only retrieves coords in the US as required by NWS API
 					iterator.next();
 					index++;
 					continue;
@@ -65,10 +63,11 @@ public class MyWeatherAPI extends WeatherAPI {
 				Double[] coords = new Double[2];
 				String address = addressNode.asText();
 
+				//rounds coords to 4 decimal places as required by NWS API
 				String lat = String.format("%.4f", latitudeNode.asDouble());
-				coords[0] = Double.parseDouble(lat);
-
 				String lon = String.format("%.4f", longitudeNode.asDouble());
+
+				coords[0] = Double.parseDouble(lat);
 				coords[1] = Double.parseDouble(lon);
 
 				Pair<String, Double[]> coordsPair = new Pair<>(address, coords);
@@ -90,6 +89,7 @@ public class MyWeatherAPI extends WeatherAPI {
 		return coordsArray;
 	}
 
+	//Retrieves gridpoints from coordinates which will be used to get forecast data for that location
 	public static Pair<String, int[]> getGridInfo(Double latitude, Double longitude){
 		String requestString = "https://api.weather.gov/points/" + latitude + "," + longitude;
 
@@ -130,10 +130,10 @@ public class MyWeatherAPI extends WeatherAPI {
 			return null;
 		}
 
-		System.out.println(gridPair.getKey() + " " + Arrays.toString(gridPair.getValue()));
 		return gridPair;
 	}
 
+	//Extending from the WeatherAPI class, retrieves the forecast for each hourly period instead of every 12-hour period.
 	public static ArrayList<HourlyPeriod> getHourlyForecast(String region, int gridx, int gridy) {
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create("https://api.weather.gov/gridpoints/"+region+"/"+String.valueOf(gridx)+","+String.valueOf(gridy)+"/forecast/hourly"))
@@ -145,6 +145,9 @@ public class MyWeatherAPI extends WeatherAPI {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		//The period objects retrieved from the hourly url have additional variables (dewpoint and humidity) thus it was
+		//needed to create a separate package (hourlyWeather) used to serialize these objects.
 		HourlyRoot r = getHourlyObject(response.body());
 		if(r == null){
 			System.err.println("Failed to parse JSon");
@@ -163,6 +166,5 @@ public class MyWeatherAPI extends WeatherAPI {
 			e.printStackTrace();
 		}
 		return toRet;
-
 	}
 }
