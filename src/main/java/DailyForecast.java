@@ -9,6 +9,7 @@ import javafx.scene.text.Font;
 import javafx.util.Pair;
 import weather.Period;
 
+import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -41,11 +42,12 @@ public class DailyForecast extends SceneBuilder{
 
 			for (int i = 0; i < dayChoiceNumber; i++) {
 
-				double min = minAndMax.get(i).getValue()[0]; // Lowest Celsius for the day
-				double max = minAndMax.get(i).getValue()[1];
+				int min = (int) minAndMax.get(i).getValue()[0]; // Lowest Celsius for the day
+				int max = (int) minAndMax.get(i).getValue()[1];
 
-				min = min*1.8 + 32.0; // Celsius to Fahrenheit
-				max = max*1.8 + 32.0;
+				min = (int) (min*1.8 + 32); // Celsius to Fahrenheit
+				max = (int) (max*1.8 + 32);
+
 
 				Pair<String, double[]> pair = minAndMax.get(i);
 				String dateString = pair.getKey();
@@ -59,14 +61,17 @@ public class DailyForecast extends SceneBuilder{
 				DayOfWeek dayOfWeek = dateTime.getDayOfWeek(); // Gets the day of the week
 				String dayOfWeekAbbreviation = dayOfWeek.toString().substring(0,3);
 
-				int rainProbability = forecastPeriod.get(i).probabilityOfPrecipitation.value;
+				double rainProbability = forecastPeriod.get(i).probabilityOfPrecipitation.value;
 
 				Label leftLabel = new Label(dayOfWeekAbbreviation);
 				leftLabel.setFont(Font.font("Inter", 20));
+				leftLabel.setTextFill(Color.WHITE);
 				Label centerLabel = new Label("L: " + min + " H: " + max);
 				centerLabel.setFont(Font.font("Inter", 20));
+				centerLabel.setTextFill(Color.WHITE);
 				Label rightLabel = new Label(rainProbability + "%");
 				rightLabel.setFont(Font.font("Inter", 20));
+				rightLabel.setTextFill(Color.WHITE);
 
 
 				BorderPane labelPane = new BorderPane();
@@ -75,7 +80,8 @@ public class DailyForecast extends SceneBuilder{
 				labelPane.setRight(rightLabel);
 				labelPane.setPadding(new Insets(5));
 				labelPane.setBorder(Border.stroke(Color.BLACK));
-				labelPane.setStyle("-fx-background-color: #FFFFFF;");
+				labelPane.setStyle("-fx-background-color: #588157;");
+				labelPane.setOpacity(.8);
 				labelPane.setPrefWidth(340);
 
 				HBox hbox = new HBox(10, labelPane);
