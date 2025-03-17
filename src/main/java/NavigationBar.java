@@ -46,6 +46,8 @@ public class NavigationBar {
 		root.setBottom(navigationBar);
 
 		Scene nextScene = new Scene(root, 360, 640);
+		nextScene.getStylesheets().add(NavigationBar.class.getResource("/css/style.css").toExternalForm());
+
 		mainStage.setScene(nextScene);
 		mainStage.setTitle(title);
 	}

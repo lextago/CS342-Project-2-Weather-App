@@ -3,10 +3,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import weather.Period;
@@ -17,95 +19,96 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class HomeScreen extends SceneBuilder{
-	private static Period currentForecast;
 	private static ArrayList<HourlyPeriod> hourlyForecast;
 
-	private static Button hourlyStatusExpanded; //static global variable used for lambda method which requires 'final' variables
+	private static BorderPane prevHourBox; //static global variable used for lambda method which requires 'final' variables
+	static DropShadow dropShadow = new DropShadow();
 
 	public static BorderPane getScreen(){
-		//int temp = WeatherAPI.getTodaysTemperature(77,70);
-		currentForecast = WeatherAPI.getForecast(region, gridX, gridY).get(0);
+		Period currentForecast = WeatherAPI.getForecast(region, gridX, gridY).get(0);
 		hourlyForecast = MyWeatherAPI.getHourlyForecast(region,gridX,gridY);
+//		double[] minAndMax = MyWeatherAPI.getMinAndMaxTemperature(region, gridX, gridY).get(0);
 		if (hourlyForecast == null){
 			System.out.println("No forecast found");
 		}
 
 		//Home screen is split into two main components: the top half and bottom half.
-		BorderPane homeBoxOne;
-		HBox homeBoxTwo;
-
 		//---elements for homeBoxOne (top portion of screen)
-		HBox homeBoxOneTop; //Placed at the very top of the screen
-		VBox homeBoxOneCenter; //Root for the top portion of the screen
-
 		Button locationButton = getLocationButton();
 
-		Label temperatureLabel = new Label();
-		Label weatherLabel = new Label();
-		temperatureLabel.setText(String.valueOf(hourlyForecast.get(0).temperature));
-		temperatureLabel.setFont(new Font(50));
-		weatherLabel.setText(hourlyForecast.get(0).shortForecast);
+		Label temperatureLabel = new Label(hourlyForecast.get(0).temperature + "°");
+		Label weatherLabel = new Label(hourlyForecast.get(0).shortForecast);
+		weatherLabel.setTextFill(Color.web("#FCFFCB"));
+		weatherLabel.setFont(Font.font("Verdana", 14));
 
-		homeBoxOneTop = new HBox(locationButton);
+		temperatureLabel.setFont(Font.font("Verdana", FontWeight.BOLD,50));
+		temperatureLabel.setTextFill(Color.rgb(255,255,255));
+		temperatureLabel.setEffect(dropShadow);
+
+		HBox homeBoxOneTop = new HBox(locationButton); //Placed at the very top of the screen
 		homeBoxOneTop.setAlignment(Pos.CENTER);
 
-		homeBoxOneCenter = new VBox(temperatureLabel, weatherLabel);
+		VBox homeBoxOneCenter = new VBox(temperatureLabel, weatherLabel); //Root for the top portion of the screen
 		homeBoxOneCenter.setAlignment(Pos.CENTER);
 
 		//--putting all the elements together for homeBoxOne (top portion of the screen)
-		homeBoxOne = new BorderPane(homeBoxOneCenter);
-		homeBoxOne.setPrefHeight(300);
+		BorderPane homeBoxOne = new BorderPane(homeBoxOneCenter);
+		homeBoxOne.setPrefHeight(150);
 		homeBoxOne.setTop(homeBoxOneTop);
 
-//		homeBoxOne.setBorder(new Border(new BorderStroke(Color.BLACK,
-//				BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
+		//middle of homeboxone and two
+		Label descriptionText = new Label(currentForecast.detailedForecast);
+		descriptionText.setWrapText(true);
+		descriptionText.setFont(Font.font("Verdana", FontWeight.MEDIUM,12));
+		descriptionText.setTextFill(Color.rgb(255,255,255));
+		descriptionText.setEffect(dropShadow);
+
+		BorderPane descriptionBox = new BorderPane(descriptionText);
+		descriptionBox.setPrefSize(300, 70);
+		descriptionBox.setId("homeBox");
+		descriptionBox.setPadding(new Insets(10));
 
 		//---elements for homeBoxTwo (lower portion of screen)
-		VBox homeBoxTwoLeft, homeBoxTwoRight; //The bottom half of the screen is split into a left and right component
+		//The bottom half of the screen is split into a left and right component
 
 		ScrollPane hourlyForecastScroll = getHourlyScroll();
 
 		//---elements in homeBoxTwoLeft (left side of homeBoxTwo)
-		TextField todayWeatherText;
-		TextArea descriptionText;
-
-		todayWeatherText = new TextField("Today's Weather");
-		todayWeatherText.setEditable(false);
-		todayWeatherText.setFont(Font.font("Verdana", 14));
-		todayWeatherText.setMaxSize(204,18);
-
-		descriptionText = new TextArea(currentForecast.detailedForecast);
-		descriptionText.setEditable(false);
-		descriptionText.setMaxSize(204, 70);
-		descriptionText.setWrapText(true);
-		descriptionText.setFont(Font.font("Verdana", 10));
+		Label todayWeatherText = new Label("Today's Weather");
+		todayWeatherText.setFont(Font.font("Verdana",FontWeight.BOLD, 16));
+		todayWeatherText.setTextFill(Color.rgb(255,255,255));
+		todayWeatherText.setPrefSize(220,18);
+		todayWeatherText.setEffect(dropShadow);
 
 		//--putting all the elements together for the left part of the bottom of the screen
-		homeBoxTwoLeft = new VBox(todayWeatherText, descriptionText, hourlyForecastScroll);
+		VBox homeBoxTwoLeft = new VBox(todayWeatherText, hourlyForecastScroll);
 
 		//---elements in homeBoxTwoRight (right side of homeBoxTwo)
-		TextField alertsText, image;
-
-		alertsText = new TextField("Alerts");
+		TextField alertsText = new TextField("Alerts");
 		alertsText.setPrefSize(100, 200);
 		alertsText.setEditable(false);
 		alertsText.setAlignment(Pos.TOP_LEFT);
+		alertsText.setId("homeBox");
 
-		image = new TextField("image");
+		TextField image = new TextField("image");
 		image.setPrefSize(100, 100);
 
-		homeBoxTwoRight = new VBox(10, alertsText, image);
+		VBox homeBoxTwoRight = new VBox(10, alertsText, image);
 
 		//--putting all elements together for homeBoxTwo (bottom portion of screen)
-		homeBoxTwo = new HBox(10, homeBoxTwoLeft, homeBoxTwoRight);
+		HBox homeBoxTwo = new HBox(10, homeBoxTwoLeft, homeBoxTwoRight);
 		homeBoxTwo.setAlignment(Pos.CENTER);
 
 		//--putting all elements together in BorderPane root (whole screen)
-		VBox centerRoot = new VBox(homeBoxOne);
+		VBox centerRoot = new VBox(10, homeBoxOne, descriptionBox);
 
 		BorderPane root = new BorderPane(centerRoot);
-		root.setPadding(new Insets(10));
+		root.setPadding(new Insets(10, 10, 0, 10));
 		root.setBottom(homeBoxTwo); //aligns homeBoxTwo to the bottom of the screen
+
+		Image homeBackground = new Image("/images/matcha-background.jpg", 360, 640, false, true);
+		BackgroundImage backgroundImage = new BackgroundImage(homeBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
+		root.setBackground(new Background(backgroundImage));
 
 		return new BorderPane(root);
 	}
@@ -113,6 +116,8 @@ public class HomeScreen extends SceneBuilder{
 	//Creates dialog window to prompt user for location
 	private static Button getLocationButton(){
 		Button locationButton = new Button(getLocation());
+		locationButton.setPrefSize(150,40);
+		locationButton.setFont(Font.font("Verdana", FontWeight.SEMI_BOLD, 14));
 
 		locationButton.setOnAction(e -> {
 
@@ -139,53 +144,89 @@ public class HomeScreen extends SceneBuilder{
 		VBox hourlyForecastBox = new VBox();
 		ScrollPane hourlyForecastScroll = new ScrollPane(hourlyForecastBox); //This ScrollPane allows the user to scroll through the VBox
 		hourlyForecastScroll.setPrefSize(220, 300);
+		hourlyForecastScroll.setId("shelfScroll");
 
-		ArrayList<Button> hourlyButtons = new ArrayList<>();
-		ArrayList<String> hourlyLabels = new ArrayList<>();
-		ArrayList<String> hourlyExtendedLabels = new ArrayList<>();
+		ArrayList<HBox> moreInfoBoxes = new ArrayList<>();
+		ArrayList<BorderPane> hourBoxes = new ArrayList<>();
 
-		for(int i = 1; i <= 24; i++){ //Creates 24 buttons to display the hourly forecast
-			//Converts Date object into "hh a" (hour am/pm) format
+		for(int i = 0; i <= 24; i++){
 			HourlyPeriod currentPeriod = hourlyForecast.get(i);
+
 			Date currentHour = currentPeriod.startTime;
 			SimpleDateFormat localDateFormat = new SimpleDateFormat("hh a");
 			String hourTime = localDateFormat.format(currentHour);
 
-			String textBody = hourTime + " | " + currentPeriod.temperature + "° | " + currentPeriod.probabilityOfPrecipitation.value + "%";
-			String extendedTextBody = textBody + "\n" + currentPeriod.windSpeed + " " + currentPeriod.windDirection;
+			Label time = new Label(hourTime);
+			time.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));
+			time.setTextFill(Color.rgb(255,255,255));
+			time.setEffect(dropShadow);
 
-			Button hourlyStatusButton = new Button(textBody);
-			hourlyStatusButton.setPrefSize(204, 50);
-			hourlyStatusButton.setAlignment(Pos.TOP_LEFT);
+			Label temp = new Label(String.valueOf(currentPeriod.temperature) + "°");
+			temp.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+			temp.setTextFill(Color.rgb(255,255,255));
+			temp.setEffect(dropShadow);
 
-			hourlyForecastBox.getChildren().add(hourlyStatusButton);
+			Label rainChance = new Label(currentPeriod.probabilityOfPrecipitation.value + "%");
+			rainChance.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+			rainChance.setTextFill(Color.web("4B62F3FF"));
+			rainChance.setEffect(dropShadow);
 
-			hourlyButtons.add(hourlyStatusButton);
-			hourlyLabels.add(textBody);
-			hourlyExtendedLabels.add(extendedTextBody);
+			HBox statusBox = new HBox(30, time, temp, rainChance);
+			statusBox.setAlignment(Pos.CENTER);
 
-			//Whenever the user clicks an hourly status button, it is enlarged with additional information.
-			//The previous hourly status button that was expanded will be returned to its original state.
-			hourlyStatusExpanded = hourlyStatusButton;
-			hourlyStatusButton.setOnAction(e-> {
-				int index = hourlyButtons.indexOf(hourlyStatusButton);
-				int prevIndex = hourlyButtons.indexOf(hourlyStatusExpanded);
-				if (hourlyStatusButton.getHeight() == 50){
-					hourlyStatusButton.setPrefHeight(100);
-					hourlyStatusButton.setText(hourlyExtendedLabels.get(index));
+			Label wind = new Label("Wind: " + currentPeriod.windSpeed + " " + currentPeriod.windDirection);
+			wind.setFont(Font.font("Verdana", 9));
+			wind.setTextFill(Color.rgb(255,255,255));
 
-					if(hourlyStatusButton != hourlyStatusExpanded){
-						hourlyStatusExpanded.setPrefHeight(50);
-						hourlyStatusExpanded.setText(hourlyLabels.get(prevIndex));
+			Label humidity = new Label("Humidity: " + currentPeriod.relativeHumidity.value + "%");
+			humidity.setFont(Font.font("Verdana", 9));
+			humidity.setTextFill(Color.rgb(255,255,255));
+
+			HBox expandedStatusBox = new HBox(20, wind, humidity);
+			expandedStatusBox.setAlignment(Pos.CENTER);
+			expandedStatusBox.setVisible(false);
+			moreInfoBoxes.add(expandedStatusBox);
+
+			BorderPane currHourBox = new BorderPane();
+			currHourBox.setCenter(statusBox);
+			currHourBox.setBottom(expandedStatusBox);
+			currHourBox.setPadding(new Insets(6));
+			currHourBox.setPrefSize(204,50);
+
+			if(i == 0){
+				currHourBox.setId("shelfTop");
+			}
+			else if(i == 24){
+				currHourBox.setId("shelfBottom");
+			}
+			else{
+				currHourBox.setId("shelfMiddle");
+			}
+
+			hourBoxes.add(currHourBox);
+			hourlyForecastBox.getChildren().add(currHourBox);
+
+			prevHourBox = currHourBox;
+			currHourBox.setOnMouseClicked(e -> {
+				int index = hourBoxes.indexOf(currHourBox);
+				int prevIndex = hourBoxes.indexOf(prevHourBox);
+
+				if(!moreInfoBoxes.get(index).isVisible()){
+					moreInfoBoxes.get(index).setVisible(true);
+
+					if(currHourBox != prevHourBox){
+						moreInfoBoxes.get(prevIndex).setVisible(false);
 					}
-					hourlyStatusExpanded = (Button) e.getSource();
+
+					prevHourBox = currHourBox;
 				}
 				else{
-					hourlyStatusButton.setPrefHeight(50);
-					hourlyStatusButton.setText(hourlyLabels.get(index));
+					moreInfoBoxes.get(index).setVisible(false);
 				}
 			});
 		}
+
+		hourlyForecastScroll.setStyle("-fx-background-color: transparent");
 
 		return hourlyForecastScroll;
 	}

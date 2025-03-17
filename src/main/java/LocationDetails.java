@@ -213,6 +213,7 @@ public class LocationDetails extends SceneBuilder{
 				homeScreen.setBottom(navBar.getNavigationBar());
 
 				Scene homeScene = new Scene(homeScreen, 360, 640);
+				homeScene.getStylesheets().add(NavigationBar.class.getResource("/css/style.css").toExternalForm());
 				mainStage.setScene(homeScene);
 
 				//closes the dialog window

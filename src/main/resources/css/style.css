@@ -1,0 +1,37 @@
+#shelfTop{
+    -fx-background-image: url("../images/shelf_top.jpeg");
+}
+
+#shelfTop:hover {
+    -fx-background-image: url("../images/shelf_top_hover.jpeg");
+}
+
+#shelfMiddle{
+    -fx-background-image: url("../images/shelf_middle.jpeg");
+}
+
+#shelfMiddle:hover {
+    -fx-background-image: url("../images/shelf_middle_hover.jpeg");
+}
+
+#shelfBottom{
+    -fx-background-image: url("../images/shelf_bottom.jpeg");
+}
+
+#shelfBottom:hover {
+    -fx-background-image: url("../images/shelf_bottom_hover.jpeg");
+}
+
+#shelfScroll .scroll-bar:vertical{
+    -fx-background-color: transparent;
+}
+
+#shelfScroll .scroll-bar:vertical .thumb{
+    -fx-background-color: #C19A6B;
+}
+
+#homeBox{
+    -fx-opacity: 0.8;
+    -fx-background-color: #8A9D6C;
+    -fx-background-radius: 10;
+}
