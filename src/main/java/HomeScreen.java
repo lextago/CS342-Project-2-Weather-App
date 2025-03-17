@@ -3,6 +3,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -20,7 +21,8 @@ import java.util.Date;
 public class HomeScreen extends SceneBuilder{
 	private static ArrayList<HourlyPeriod> hourlyForecast;
 
-	private static Button hourlyStatusExpanded; //static global variable used for lambda method which requires 'final' variables
+	private static Button prevHourButton; //static global variable used for lambda method which requires 'final' variables
+	private static BorderPane prevHourBox;
 
 	public static BorderPane getScreen(){
 		//int temp = WeatherAPI.getTodaysTemperature(77,70);
@@ -40,7 +42,7 @@ public class HomeScreen extends SceneBuilder{
 
 		Button locationButton = getLocationButton();
 
-		Label temperatureLabel = new Label(String.valueOf(hourlyForecast.get(0).temperature));
+		Label temperatureLabel = new Label(hourlyForecast.get(0).temperature + "°");
 		Label weatherLabel = new Label(hourlyForecast.get(0).shortForecast);
 		temperatureLabel.setFont(Font.font("Verdana", FontWeight.BOLD,50));
 		temperatureLabel.setTextFill(Color.rgb(255,255,255));
@@ -142,57 +144,88 @@ public class HomeScreen extends SceneBuilder{
 		ScrollPane hourlyForecastScroll = new ScrollPane(hourlyForecastBox); //This ScrollPane allows the user to scroll through the VBox
 		hourlyForecastScroll.setPrefSize(220, 300);
 
-		ArrayList<Button> hourlyButtons = new ArrayList<>();
-		ArrayList<String> hourlyLabels = new ArrayList<>();
-		ArrayList<String> hourlyExtendedLabels = new ArrayList<>();
+		ArrayList<HBox> moreInfoBoxes = new ArrayList<>();
+		ArrayList<BorderPane> hourBoxes = new ArrayList<>();
 
-		for(int i = 0; i <= 24; i++){ //Creates 24 buttons to display the hourly forecast
-			//Converts Date object into "hh a" (hour am/pm) format
+		for(int i = 0; i <= 24; i++){
 			HourlyPeriod currentPeriod = hourlyForecast.get(i);
 
 			Date currentHour = currentPeriod.startTime;
 			SimpleDateFormat localDateFormat = new SimpleDateFormat("hh a");
 			String hourTime = localDateFormat.format(currentHour);
 
-			String textBody = hourTime + " | " + currentPeriod.temperature + "° | " + currentPeriod.probabilityOfPrecipitation.value + "%";
-			String extendedTextBody = textBody + "\n" + currentPeriod.windSpeed + " " + currentPeriod.windDirection;
+			DropShadow dropShadow = new DropShadow();
 
-			Button hourlyStatusButton = new Button(textBody);
-			hourlyStatusButton.setPrefSize(204, 50);
-			hourlyStatusButton.setAlignment(Pos.TOP_LEFT);
+			Label time = new Label(hourTime);
+			time.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));
+			time.setTextFill(Color.rgb(255,255,255));
+			time.setEffect(dropShadow);
 
-//			hourlyStatusButton.setBackground(new Background(new BackgroundFill(Color.rgb(255,100,200),null,null)));
-//			hourlyStatusButton.setStyle("-fx-background-color: rgb(0, 232, 232);");
-			hourlyStatusButton.setId("hourlyButton");
+			Label temp = new Label(String.valueOf(currentPeriod.temperature) + "°");
+			temp.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+			temp.setTextFill(Color.rgb(255,255,255));
+			temp.setEffect(dropShadow);
 
-			hourlyForecastBox.getChildren().add(hourlyStatusButton);
+			Label rainChance = new Label(currentPeriod.probabilityOfPrecipitation.value + "%");
+			rainChance.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+			rainChance.setTextFill(Color.web("4B62F3FF"));
+			rainChance.setEffect(dropShadow);
 
-			hourlyButtons.add(hourlyStatusButton);
-			hourlyLabels.add(textBody);
-			hourlyExtendedLabels.add(extendedTextBody);
+			HBox statusBox = new HBox(30, time, temp, rainChance);
+			statusBox.setAlignment(Pos.CENTER);
 
-			//Whenever the user clicks an hourly status button, it is enlarged with additional information.
-			//The previous hourly status button that was expanded will be returned to its original state.
-			hourlyStatusExpanded = hourlyStatusButton;
-			hourlyStatusButton.setOnAction(e-> {
-				int index = hourlyButtons.indexOf(hourlyStatusButton);
-				int prevIndex = hourlyButtons.indexOf(hourlyStatusExpanded);
-				if (hourlyStatusButton.getHeight() == 50){
-					hourlyStatusButton.setPrefHeight(100);
-					hourlyStatusButton.setText(hourlyExtendedLabels.get(index));
+			Label wind = new Label("Wind: " + currentPeriod.windSpeed + " " + currentPeriod.windDirection);
+			wind.setFont(Font.font("Verdana", 9));
+			wind.setTextFill(Color.rgb(255,255,255));
 
-					if(hourlyStatusButton != hourlyStatusExpanded){
-						hourlyStatusExpanded.setPrefHeight(50);
-						hourlyStatusExpanded.setText(hourlyLabels.get(prevIndex));
+			Label humidity = new Label("Humidity: " + currentPeriod.relativeHumidity.value + "%");
+			humidity.setFont(Font.font("Verdana", 9));
+			humidity.setTextFill(Color.rgb(255,255,255));
+
+			HBox expandedStatusBox = new HBox(20, wind, humidity);
+			expandedStatusBox.setAlignment(Pos.CENTER);
+			expandedStatusBox.setVisible(false);
+			moreInfoBoxes.add(expandedStatusBox);
+
+			BorderPane currHourBox = new BorderPane();
+			currHourBox.setCenter(statusBox);
+			currHourBox.setBottom(expandedStatusBox);
+			currHourBox.setPadding(new Insets(6));
+			currHourBox.setPrefSize(204,50);
+
+			if(i == 0){
+				currHourBox.setId("shelfTop");
+			}
+			else if(i == 24){
+				currHourBox.setId("shelfBottom");
+			}
+			else{
+				currHourBox.setId("shelfMiddle");
+			}
+
+			hourBoxes.add(currHourBox);
+			hourlyForecastBox.getChildren().add(currHourBox);
+
+			prevHourBox = currHourBox;
+			currHourBox.setOnMouseClicked(e -> {
+				int index = hourBoxes.indexOf(currHourBox);
+				int prevIndex = hourBoxes.indexOf(prevHourBox);
+
+				if(!moreInfoBoxes.get(index).isVisible()){
+					moreInfoBoxes.get(index).setVisible(true);
+
+					if(currHourBox != prevHourBox){
+						moreInfoBoxes.get(prevIndex).setVisible(false);
 					}
-					hourlyStatusExpanded = (Button) e.getSource();
+
+					prevHourBox = currHourBox;
 				}
 				else{
-					hourlyStatusButton.setPrefHeight(50);
-					hourlyStatusButton.setText(hourlyLabels.get(index));
+					moreInfoBoxes.get(index).setVisible(false);
 				}
 			});
 		}
+
 
 		return hourlyForecastScroll;
 	}

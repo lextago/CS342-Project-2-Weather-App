@@ -1,9 +1,27 @@
-#hourlyButton:hover {
-    /*-fx-default-button: red;*/
-    -fx-background-color: red;
-    /*-fx-text-fill: white;*/
+#shelfTop{
+    -fx-background-image: url("../images/shelf_top.jpeg");
 }
 
-/*.root {*/
-/*    -fx-default-button: rgb(100, 232, 232);*/
+#shelfTop:hover {
+    -fx-background-image: url("../images/shelf_top_hover.jpeg");
+}
+
+#shelfMiddle{
+    -fx-background-image: url("../images/shelf_middle.jpeg");
+}
+
+#shelfMiddle:hover {
+    -fx-background-image: url("../images/shelf_middle_hover.jpeg");
+}
+
+#shelfBottom{
+    -fx-background-image: url("../images/shelf_bottom.jpeg");
+}
+
+#shelfBottom:hover {
+    -fx-background-image: url("../images/shelf_bottom_hover.jpeg");
+}
+
+/*.scroll-bar{*/
+/*    -fx-background-color: black;*/
 /*}*/
