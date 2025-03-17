@@ -1,7 +1,3 @@
-import hourlyWeather.HourlyPeriod;
-import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
@@ -10,97 +6,98 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.util.Pair;
+import weather.Period;
 
-import javax.swing.*;
-import java.text.SimpleDateFormat;
-import java.time.format.TextStyle;
-import java.util.Calendar;
-import java.util.Date;
+import java.text.DecimalFormat;
+import java.time.DayOfWeek;
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class DailyForecast extends SceneBuilder{
 	public static BorderPane getScreen(){
 		//https://api.weather.gov/gridpoints/LOT/77,70/forecast/hourly
 
-		//Testing!!!
-		//
- 		//
-		// 1st hour
-
-		HourlyPeriod currentForecast = MyWeatherAPI.getHourlyForecast("LOT", 77, 70).get(0);
-		System.out.println("Forecast right now (current hour)");
-		System.out.println(currentForecast.shortForecast);
-
-		Date currentHour = currentForecast.startTime;//.after(new Date(Calendar.YEAR, Calendar.MARCH, Calendar.DAY_OF_MONTH)) ? currentForecast.startTime : new Date();
-		System.out.println("All details of forecast right now: (Current hour)");
-		System.out.println(currentHour);
-
-		SimpleDateFormat localDateFormat = new SimpleDateFormat("hh a");
-		System.out.println("Current time:");
-		System.out.println(localDateFormat.format(currentHour));
-
-
-        // 2nd hour
-		HourlyPeriod currentForecastTwo = MyWeatherAPI.getHourlyForecast("LOT", 77, 70).get(1);
-		System.out.println("\nForecast right now (2nd hour )");
-		System.out.println(currentForecastTwo.shortForecast);
-
-		Date currentHourTwo = currentForecastTwo.startTime;//.after(new Date(Calendar.YEAR, Calendar.MARCH, Calendar.DAY_OF_MONTH+1)) ? currentForecast.startTime : new Date();
-		System.out.println("All details of forecast right now: (2nd hour)");
-		System.out.println(currentHourTwo);
-
-		SimpleDateFormat localDateFormatTwo = new SimpleDateFormat("hh a");
-		System.out.println("Current time:");
-		System.out.println(localDateFormatTwo.format(currentHourTwo));
-
-		// Next Day
-		SimpleDateFormat localDateFormatMilitary = new SimpleDateFormat("HH");
-		System.out.println("\nCurrent time: (Military)");
-		System.out.println(localDateFormatMilitary.format(currentHour));
-		int current = Integer.parseInt(localDateFormatMilitary.format(currentHour));
-		int calculateNextDay = 24 - current;
-		System.out.println("Next day at: ");
-		System.out.println(calculateNextDay);
-
-		// Next Day Data Testing
-		HourlyPeriod currentForecastThree = MyWeatherAPI.getHourlyForecast("LOT", 77, 70).get(calculateNextDay); // Very important, gets to next day
-		Date currentHourThree = currentForecastThree.startTime;//.after(new Date(Calendar.YEAR, Calendar.MARCH, Calendar.DAY_OF_MONTH+1)) ? currentForecast.startTime : new Date();
-		System.out.println("\nAll details of forecast right now: (next day)");
-		System.out.println(currentHourThree);
-
-		//
- 		//
- 		// Testing!
-		// After clicking day button:
-		// Implement a loop here for daily based on amount of days chosen (3,5, or 7)(current day):
-		// print what day it is: "Sat March 14"
-		// print the hourly times.
-		// Print their forecasts.
-
 		VBox root = new VBox(5);
+		VBox holdEachDay = new VBox(1);
 
-		ComboBox<String> numDaysChoices = new ComboBox<>();
-		VBox textFieldsHolder = new VBox(1);
-
+		ComboBox<String> numDaysChoices = new ComboBox<>(); // Dropdown of all day choices
+		numDaysChoices.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
 		numDaysChoices.getItems().addAll("1 Day", "3 Day", "5 Day", "7 Day");
 
-		numDaysChoices.setOnAction(event -> {
-			String day = numDaysChoices.getValue();
-			int number = Integer.parseInt(day.split("")[0]);
+		// Outputs the number of days desired
 
-			textFieldsHolder.getChildren().clear();
-			for (int i = 0; i < number; i++) {
-				TextField field = new TextField("Sat " + (i + 1) + "/" + (i+2));
+		numDaysChoices.setOnAction(event -> {
+
+			// Gets number of days desired
+			String dayChoice = numDaysChoices.getValue();
+			int dayChoiceNumber = Integer.parseInt(dayChoice.split("")[0]);
+
+			holdEachDay.getChildren().clear();
+
+			ArrayList<Pair<String, double[]>> minAndMax = MyWeatherAPI.getMinAndMaxTemperatures("LOT", 77, 70);
+			ArrayList<Period> forecastPeriod = MyWeatherAPI.getForecast("LOT", 77, 70);
+
+
+			for (int i = 0; i < dayChoiceNumber; i++) {
+
+				int min = (int) minAndMax.get(i).getValue()[0]; // Lowest Celsius for the day
+				int max = (int) minAndMax.get(i).getValue()[1];
+
+				min = (int) (min*1.8 + 32); // Celsius to Fahrenheit
+				max = (int) (max*1.8 + 32);
+
+
+				Pair<String, double[]> pair = minAndMax.get(i);
+				String dateString = pair.getKey();
+
+				String dateTimeString = dateString.split("/")[0]; // Makes the date format ISO
+
+				// Formats properly to get date
+				DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+				OffsetDateTime dateTime = OffsetDateTime.parse(dateTimeString, formatter);
+
+				DayOfWeek dayOfWeek = dateTime.getDayOfWeek(); // Gets the day of the week
+				String dayOfWeekAbbreviation = dayOfWeek.toString().substring(0,3);
+
+				double rainProbability = forecastPeriod.get(i).probabilityOfPrecipitation.value;
+
+				Label leftLabel = new Label(dayOfWeekAbbreviation);
+				leftLabel.setFont(Font.font("Inter", 20));
+				leftLabel.setTextFill(Color.WHITE);
+				Label centerLabel = new Label("L: " + min + " H: " + max);
+				centerLabel.setFont(Font.font("Inter", 20));
+				centerLabel.setTextFill(Color.WHITE);
+				Label rightLabel = new Label(rainProbability + "%");
+				rightLabel.setFont(Font.font("Inter", 20));
+				rightLabel.setTextFill(Color.WHITE);
+
+
+				BorderPane labelPane = new BorderPane();
+				labelPane.setLeft(leftLabel);
+				labelPane.setCenter(centerLabel);
+				labelPane.setRight(rightLabel);
+				labelPane.setPadding(new Insets(5));
+				labelPane.setBorder(Border.stroke(Color.BLACK));
+				labelPane.setStyle("-fx-background-color: #588157;");
+				labelPane.setOpacity(.8);
+				labelPane.setPrefWidth(340);
+
+				HBox hbox = new HBox(10, labelPane);
+				hbox.setAlignment(Pos.CENTER);
+
+				TextField field = new TextField(dayOfWeek + "     L:" + min + "     H:" + max);
 				field.setEditable(false);
-				field.setFont(new Font("Inter", 20));
-				//field.setStyle("-fx-background-color: #588157;");
+				field.setFont(Font.font("Inter", 20));
 				field.setStyle("-fx-text-fill: #ffffff; -fx-background-color: rgba(88,129,87,0.8);");
 				field.setBorder(Border.stroke(Color.BLACK));
 				field.setPrefSize(160,50);
-				textFieldsHolder.getChildren().add(field);
+				holdEachDay.getChildren().add(hbox);
 			}
 		});
 
-		root.getChildren().addAll(numDaysChoices, textFieldsHolder);
+		root.getChildren().addAll(numDaysChoices, holdEachDay);
 		BorderPane rootPane = new BorderPane(root);
 		rootPane.setPrefWidth(350);
 		HBox hBox = new HBox(rootPane);
