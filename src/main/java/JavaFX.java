@@ -20,14 +20,8 @@ public class JavaFX extends Application {
 		sceneBuilder.setStage(primaryStage);
 
 		NavigationBar navBar = new NavigationBar(primaryStage);
-		HBox navigationBar = navBar.getNavigationBar();
 
-		BorderPane homeRoot = HomeScreen.getScreen();
-		homeRoot.setBottom(navigationBar);
-
-		Scene home = new Scene(homeRoot,  360, 640);
-
-		home.getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+		Scene home = HomeScreen.getScene();
 
 		primaryStage.setResizable(false);
 

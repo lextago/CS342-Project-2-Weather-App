@@ -1,15 +1,16 @@
 import javafx.event.ActionEvent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 
 public class NavigationBar {
 	public static HBox navigationBar;
 	private static Stage mainStage;
 
-	public HBox getNavigationBar() {
+	public static HBox getNavigationBar() {
 		return navigationBar;
 	}
 
@@ -18,37 +19,45 @@ public class NavigationBar {
 
 		Button homeButton, dailyButton, trendsButton, settingsButton;
 
-		homeButton = new Button("Home");
-		homeButton.setPrefSize(160, 50);
+		homeButton = makeNavigationButton("/images/home_icon.png");
 
-		dailyButton = new Button("Daily");
-		dailyButton.setPrefSize(160,50);
+		dailyButton = makeNavigationButton("/images/calendar_icon.png");
 
-		trendsButton = new Button("Trends");
-		trendsButton.setPrefSize(160,50);
+		trendsButton = makeNavigationButton("/images/bar_chart_icon.png");
 
-		settingsButton = new Button("Settings");
-		settingsButton.setPrefSize(160,50);
+		settingsButton = makeNavigationButton("/images/settings_icon.png");
 
-		homeButton.setOnAction(e -> navigationBarHandler(e, HomeScreen.getScreen(), "Home Screen"));
-		dailyButton.setOnAction(e -> navigationBarHandler(e, DailyForecast.getScreen(), "Daily Forecast"));
-		trendsButton.setOnAction(e -> navigationBarHandler(e, WeeklyTrends.getScreen(), "Weekly Trends"));
-		settingsButton.setOnAction(e -> navigationBarHandler(e, Settings.getScreen(), "Settings"));
+		homeButton.setOnAction(e -> navigationBarHandler(e, HomeScreen.getScene(), "Home Screen"));
+		dailyButton.setOnAction(e -> navigationBarHandler(e, DailyForecast.getScene(), "Daily Forecast"));
+		trendsButton.setOnAction(e -> navigationBarHandler(e, WeeklyTrends.getScene(), "Weekly Trends"));
+		settingsButton.setOnAction(e -> navigationBarHandler(e, Settings.getScene(), "Settings"));
 
-		navigationBar = new HBox(homeButton, dailyButton, trendsButton, settingsButton);
+		HBox navigationBarBox = new HBox(homeButton, dailyButton, trendsButton, settingsButton);
+		Image wood = new Image("/images/grey-wood.jpg", 360, 160, false, true);
+		BackgroundImage woodBackground = new BackgroundImage(wood, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
+		navigationBarBox.setBackground(new Background(woodBackground));
+		navigationBar = navigationBarBox;
 	}
 
 	/*	Event handler for each button in the navigation bar.
 	Adds the navigation bar to the bottom of the BorderPane, uses that BorderPane as the root
 	for the next scene, then changes the stage's current scene to the next.
 	*/
-	private static void navigationBarHandler(ActionEvent event, BorderPane root, String title){
-		root.setBottom(navigationBar);
-
-		Scene nextScene = new Scene(root, 360, 640);
-		nextScene.getStylesheets().add(NavigationBar.class.getResource("/css/style.css").toExternalForm());
-
+	private static void navigationBarHandler(ActionEvent event, Scene nextScene, String title){
 		mainStage.setScene(nextScene);
 		mainStage.setTitle(title);
+	}
+
+	private static Button makeNavigationButton(String url){
+		Button button = new Button();
+		button.setPrefSize(160, 50);
+		Image icon = new Image(url);
+		ImageView view = new ImageView(icon);
+		view.setFitHeight(40);
+		view.setPreserveRatio(true);
+		button.setGraphic(view);
+		button.setId("navigationButton");
+
+		return button;
 	}
 }

@@ -1,0 +1,23 @@
+#headlineText .text-area{
+    -fx-font-weight: BOLD;
+}
+
+.text-area{
+    -fx-text-fill: white;
+    -fx-background-color: #8A9D6C;
+    -fx-border-color: white;
+    -fx-border-width: 1;
+    -fx-wrap-text: true;
+    -fx-font-family: "Verdana";
+    -fx-font-size: 12;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+.text-area .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+.text-area .scroll-pane .content{
+    -fx-background-color: transparent;
+}
