@@ -3,13 +3,13 @@ import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Pair;
 import weather.Period;
 
-import java.text.DecimalFormat;
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,8 +23,9 @@ public class DailyForecast extends SceneBuilder{
 		VBox holdEachDay = new VBox(1);
 
 		ComboBox<String> numDaysChoices = new ComboBox<>(); // Dropdown of all day choices
-		numDaysChoices.setBackground(new Background(new BackgroundFill(Color.WHITE, CornerRadii.EMPTY, Insets.EMPTY)));
-		numDaysChoices.getItems().addAll("1 Day", "3 Day", "5 Day", "7 Day");
+		numDaysChoices.setPromptText("Select Days");
+		numDaysChoices.setId("daysComboBox");
+		numDaysChoices.getItems().addAll("3 Day", "5 Day", "7 Day");
 
 		// Outputs the number of days desired
 
@@ -112,7 +113,10 @@ public class DailyForecast extends SceneBuilder{
 		Background background = new Background(background_fill);
 
 		root = new VBox(30, dailyForecastPane, hBox);
-		root.setBackground(background);
+
+		Image homeBackground = new Image("/images/matcha-background.jpg", 360, 640, false, true);
+		BackgroundImage backgroundImage = new BackgroundImage(homeBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
+		root.setBackground(new Background(backgroundImage));
 
 		return new BorderPane(root);
 	}

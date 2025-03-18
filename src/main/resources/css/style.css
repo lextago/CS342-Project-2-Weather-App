@@ -35,3 +35,25 @@
     -fx-background-color: #8A9D6C;
     -fx-background-radius: 10;
 }
+
+#daysComboBox{
+    -fx-background-color: pink;
+}
+
+#daysComboBox .combo-box .list-cell{
+    -fx-text-fill: white;
+}
+
+#daysComboBox .combo-box .list-view .list-cell{
+    -fx-text-fill: white;
+}
+
+#daysComboBox .combo-box .list-view .list-cell:focused {
+    -fx-background-color: #5F9EA0;
+    -fx-text-fill: white;
+}
+
+#daysComboBox .combo-box .list-view .list-cell:hover{
+    -fx-background-color: #5F9EA0;
+    -fx-text-fill: white;
+}
