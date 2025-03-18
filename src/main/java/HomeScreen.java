@@ -238,7 +238,7 @@ public class HomeScreen extends SceneBuilder{
 			locationDialog.setTitle("LocationDetails");
 			locationDialog.setResizable(false);
 
-			locationDialog.initOwner(mainStage);
+			locationDialog.initOwner(stage);
 			locationDialog.initModality(Modality.WINDOW_MODAL); //prevents user interaction with main stage until the dialog window has closed
 			locationDialog.showAndWait();
 		});
