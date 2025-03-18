@@ -208,20 +208,7 @@ public class LocationDetails extends SceneBuilder{
 				setGridpoint(buttonInfo.getKey(), buttonInfo.getValue()[0], buttonInfo.getValue()[1]);
 
 				//prepares the home screen to send the user back
-				NavigationBar navBar = new NavigationBar(mainStage);
-//				BorderPane homeScreen = HomeScreen.getScreen();
-//				homeScreen.setBottom(navBar.getNavigationBar());
-
-//				Scene homeScene = new Scene(homeScreen, 360, 640);
-//				homeScene.getStylesheets().add(NavigationBar.class.getResource("/css/homestyles.css").toExternalForm());
-				mainStage.setScene(HomeScreen.getScene());
-				NavigationBar navBar = new NavigationBar(stage);
-				BorderPane homeScreen = HomeScreen.getScreen();
-				homeScreen.setBottom(navBar.getNavigationBar());
-
-				Scene homeScene = new Scene(homeScreen, 360, 640);
-				homeScene.getStylesheets().add(NavigationBar.class.getResource("/css/style.css").toExternalForm());
-				stage.setScene(homeScene);
+				stage.setScene(HomeScreen.getScene());
 
 				//closes the dialog window
 				dialogStage.close();

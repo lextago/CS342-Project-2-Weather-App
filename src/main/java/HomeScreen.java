@@ -201,7 +201,7 @@ public class HomeScreen extends SceneBuilder{
 			alertsDialog.setScene(nextScene);
 			alertsDialog.setTitle("Active Alert");
 			alertsDialog.setResizable(false);
-			alertsDialog.initOwner(mainStage);
+			alertsDialog.initOwner(stage);
 
 			alertsText.setOnMouseClicked(e-> {
 				if(alertsDialog.isShowing()) {
