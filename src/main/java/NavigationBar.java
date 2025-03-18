@@ -9,7 +9,7 @@ public class NavigationBar {
 	public static HBox navigationBar;
 	private static Stage mainStage;
 
-	public HBox getNavigationBar() {
+	public static HBox getNavigationBar() {
 		return navigationBar;
 	}
 
@@ -30,10 +30,10 @@ public class NavigationBar {
 		settingsButton = new Button("Settings");
 		settingsButton.setPrefSize(160,50);
 
-		homeButton.setOnAction(e -> navigationBarHandler(e, HomeScreen.getScreen(), "Home Screen"));
-		dailyButton.setOnAction(e -> navigationBarHandler(e, DailyForecast.getScreen(), "Daily Forecast"));
-		trendsButton.setOnAction(e -> navigationBarHandler(e, WeeklyTrends.getScreen(), "Weekly Trends"));
-		settingsButton.setOnAction(e -> navigationBarHandler(e, Settings.getScreen(), "Settings"));
+		homeButton.setOnAction(e -> navigationBarHandler(e, HomeScreen.getScene(), "Home Screen"));
+		dailyButton.setOnAction(e -> navigationBarHandler(e, DailyForecast.getScene(), "Daily Forecast"));
+		trendsButton.setOnAction(e -> navigationBarHandler(e, WeeklyTrends.getScene(), "Weekly Trends"));
+		settingsButton.setOnAction(e -> navigationBarHandler(e, Settings.getScene(), "Settings"));
 
 		navigationBar = new HBox(homeButton, dailyButton, trendsButton, settingsButton);
 	}
@@ -42,12 +42,7 @@ public class NavigationBar {
 	Adds the navigation bar to the bottom of the BorderPane, uses that BorderPane as the root
 	for the next scene, then changes the stage's current scene to the next.
 	*/
-	private static void navigationBarHandler(ActionEvent event, BorderPane root, String title){
-		root.setBottom(navigationBar);
-
-		Scene nextScene = new Scene(root, 360, 640);
-		nextScene.getStylesheets().add(NavigationBar.class.getResource("/css/style.css").toExternalForm());
-
+	private static void navigationBarHandler(ActionEvent event, Scene nextScene, String title){
 		mainStage.setScene(nextScene);
 		mainStage.setTitle(title);
 	}

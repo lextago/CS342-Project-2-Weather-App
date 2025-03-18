@@ -223,6 +223,51 @@ public class MyWeatherAPI extends WeatherAPI {
 		return precipitationProbabilities;
 	}
 
+	public static ArrayList<Alert> getActiveAlerts(double latitude, double longitude){
+		String requestString = "https://api.weather.gov/alerts/active?point=" + latitude + "," + longitude;
+		System.out.println("alerts " + requestString);
+		HttpRequest request = HttpRequest.newBuilder()
+				.uri(URI.create(requestString))
+				//.method("GET", HttpRequest.BodyPublishers.noBody())
+				.build();
+		HttpResponse<String> response = null;
+		try {
+			response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		ArrayList<Alert> activeAlerts = new ArrayList<>();
+		try{
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode root = mapper.readTree(response.body());
+
+			Iterator<JsonNode> iterator = root.at("/features").elements();
+
+			int i = 0;
+			while(iterator.hasNext()){
+				JsonNode headlineNode = root.at("/features/" + i + "/properties/headline");
+				JsonNode descriptionNode = root.at("/features/" + i + "/properties/description");
+				JsonNode instructionNode = root.at("/features/" + i + "/properties/instruction");
+
+				Alert activeAlert = new Alert();
+				activeAlert.headline = headlineNode.asText();
+				activeAlert.description = descriptionNode.asText();
+				activeAlert.instruction = instructionNode.asText();
+
+				activeAlerts.add(activeAlert);
+
+				iterator.next();
+				i++;
+			}
+
+		}catch (JsonProcessingException e){
+			e.printStackTrace();
+		}
+
+		return activeAlerts;
+	}
+
 	//Extending from the WeatherAPI class, retrieves the forecast for each hourly period instead of every 12-hour period.
 	public static ArrayList<HourlyPeriod> getHourlyForecast(String region, int gridx, int gridy) {
 		String requestString = "https://api.weather.gov/gridpoints/"+region+"/"+String.valueOf(gridx)+","+String.valueOf(gridy)+"/forecast/hourly";

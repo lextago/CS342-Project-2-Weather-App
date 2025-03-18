@@ -21,7 +21,7 @@ public class LocationDetails extends SceneBuilder{
 	public static Stage dialogStage;
 
 	private static ArrayList<Pair<String, int[]>> gridpoints;
-	private static ArrayList<Pair<String, Double[]>> coordinates;
+	private static ArrayList<Pair<String, Double[]>> coordinatesArray;
 	private static VBox locationsBox;
 	private static ScrollPane locationsScroll;
 	private static BorderPane root;
@@ -134,21 +134,19 @@ public class LocationDetails extends SceneBuilder{
 		information for the United States.
 	*/
 	private static void submitHandler(ActionEvent event){
-		//resets the location
-		city = "";
-		state = "";
-		latitude = 0.0;
-		longitude = 0.0;
+		String city = cityInput.getText();
+		String state = stateInput.getText();
+		String latitudeText = latitudeInput.getText();
+		String longitudeText = longitudeInput.getText();
+
 		Pair<String, int[]> gridInfo;
 		gridpoints = new ArrayList<>();
-		coordinates = new ArrayList<>();
+		coordinatesArray = new ArrayList<>();
 
-		if(!cityInput.getText().isEmpty() || !stateInput.getText().isEmpty()){
-			city = cityInput.getText();
-			state = stateInput.getText();
-			coordinates = MyWeatherAPI.getCoords(city, state); //Returns a Pair<String, Double[]> of (Address, Coordinates)
+		if(!city.isEmpty() || !state.isEmpty()){
+			coordinatesArray = MyWeatherAPI.getCoords(city, state); //Returns a Pair<String, Double[]> of (Address, Coordinates)
 
-			for(Pair<String, Double[]> coordPair : coordinates){
+			for(Pair<String, Double[]> coordPair : coordinatesArray){
 				System.out.println(Arrays.toString(coordPair.getValue()) + " " + coordPair.getKey()); //for debugging purposes
 
 				gridInfo = MyWeatherAPI.getGridInfo(coordPair.getValue()[0], coordPair.getValue()[1]); //Returns a Pair<String, int[]> of (gridId, gridX, gridY)
@@ -159,23 +157,23 @@ public class LocationDetails extends SceneBuilder{
 			}
 		}
 
-		if(!latitudeInput.getText().isEmpty() && !longitudeInput.getText().isEmpty()){
+		if(!latitudeText.isEmpty() && !longitudeText.isEmpty()){
 			//Formats the lat/lon coords to follow the format for the NWS API service
-			String latitudeText = String.format("%.4f", Double.parseDouble(latitudeInput.getText()));
-			String longitudeText = String.format("%.4f", Double.parseDouble(longitudeInput.getText()));
+			latitudeText = String.format("%.4f", Double.parseDouble(latitudeInput.getText()));
+			longitudeText = String.format("%.4f", Double.parseDouble(longitudeInput.getText()));
 
 			//yes... we converted a string -> double -> string -> double... only way to format a double without using another package
-			latitude = Double.parseDouble(latitudeText);
-			longitude = Double.parseDouble(longitudeText);
+			Double latitudeVal = Double.parseDouble(latitudeText);
+			Double longitudeVal = Double.parseDouble(longitudeText);
 
-			gridInfo = MyWeatherAPI.getGridInfo(latitude, longitude);
+			gridInfo = MyWeatherAPI.getGridInfo(latitudeVal, longitudeVal);
 			if (gridInfo != null && !gridInfo.getKey().isEmpty()){
 				gridpoints.add(gridInfo);
 
-				String location = latitude + "," + longitude;
+				String location = latitudeVal + "," + longitudeVal;
 				//since coordinates is an ArrayList of Pair<String, Double[]> objects, it's necessary to create an "address" for this coordinate
-				Pair<String, Double[]> coords = new Pair<>(location, new Double[]{latitude, longitude});
-				coordinates.addFirst(coords);
+				Pair<String, Double[]> coords = new Pair<>(location, new Double[]{latitudeVal, longitudeVal});
+				coordinatesArray.addFirst(coords);
 			}
 		}
 
@@ -192,7 +190,7 @@ public class LocationDetails extends SceneBuilder{
 
 		ArrayList<Button> buttonsArray = new ArrayList<>();
 		for(int i = 0; i < gridpoints.size(); i++){
-			Button locationButton = new Button(coordinates.get(i).getKey()); //The text for the button is the address of the location
+			Button locationButton = new Button(coordinatesArray.get(i).getKey()); //The text for the button is the address of the location
 			buttonsArray.add(locationButton);
 
 			locationButton.setPrefSize(200, 50);
@@ -202,19 +200,21 @@ public class LocationDetails extends SceneBuilder{
 			locationButton.setOnAction(e -> {
 				int index = buttonsArray.indexOf(locationButton);
 				Pair<String, int[]> buttonInfo = gridpoints.get(index);
+				Pair<String, Double[]> coords = coordinatesArray.get(index);
 
 				//this sets the location for the whole app
-				setLocation(coordinates.get(index).getKey());
+				setLocation(coords.getKey());
+				setCoordinates(coords.getValue()[0], coords.getValue()[1]);
 				setGridpoint(buttonInfo.getKey(), buttonInfo.getValue()[0], buttonInfo.getValue()[1]);
 
 				//prepares the home screen to send the user back
 				NavigationBar navBar = new NavigationBar(mainStage);
-				BorderPane homeScreen = HomeScreen.getScreen();
-				homeScreen.setBottom(navBar.getNavigationBar());
+//				BorderPane homeScreen = HomeScreen.getScreen();
+//				homeScreen.setBottom(navBar.getNavigationBar());
 
-				Scene homeScene = new Scene(homeScreen, 360, 640);
-				homeScene.getStylesheets().add(NavigationBar.class.getResource("/css/style.css").toExternalForm());
-				mainStage.setScene(homeScene);
+//				Scene homeScene = new Scene(homeScreen, 360, 640);
+//				homeScene.getStylesheets().add(NavigationBar.class.getResource("/css/homestyles.css").toExternalForm());
+				mainStage.setScene(HomeScreen.getScene());
 
 				//closes the dialog window
 				dialogStage.close();

@@ -5,6 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -23,11 +24,63 @@ public class HomeScreen extends SceneBuilder{
 
 	private static BorderPane prevHourBox; //static global variable used for lambda method which requires 'final' variables
 	static DropShadow dropShadow = new DropShadow();
+	static Stage alertsDialog;
 
-	public static BorderPane getScreen(){
+	public static Scene getScene(){
+		BorderPane root = getRoot();
+		BorderPane rootPane = new BorderPane(root);
+		rootPane.setBottom(NavigationBar.getNavigationBar());
+		rootPane.setPrefSize(360,640);
+
+		Pane pane = new Pane();
+		pane.getChildren().add(rootPane);
+
+		Image plantImage = new Image("/images/indoor_plant.png", 100, 100, false, true);
+		ImageView plantView = new ImageView(plantImage);
+
+		Image catImage = new Image("/images/cat_lamp.png", 150, 150, false, true);
+		ImageView catView = new ImageView(catImage);
+
+		Image pingu = new Image("/images/pingu_orange.png", 80, 80, false, true);
+		ImageView pinguView = new ImageView(pingu);
+
+		Image matcha = new Image("/images/matcha.png", 100, 100, false, true);
+		ImageView matchaView = new ImageView(matcha);
+
+		pane.getChildren().add(plantView);
+		plantView.setLayoutX(-20);
+		plantView.setLayoutY(200);
+
+		pane.getChildren().add(catView);
+		catView.setLayoutX(260);
+		catView.setLayoutY(125);
+
+		pane.getChildren().add(pinguView);
+		pinguView.setLayoutX(300);
+		pinguView.setLayoutY(520);
+
+		pane.getChildren().add(matchaView);
+		matchaView.setLayoutX(260);
+		matchaView.setLayoutY(-25);
+
+		Label matchaLabel = new Label("\"♡ I love you\nso matcha ♡\"");
+		matchaLabel.setFont(Font.font("Lucida Calligraphy", 12));
+		matchaLabel.setTextFill(Color.WHITE);
+		pane.getChildren().add(matchaLabel);
+		matchaLabel.setLayoutX(15);
+		matchaLabel.setLayoutY(15);
+
+
+		Scene homeScene = new Scene(pane, 360, 640);
+		homeScene.getStylesheets().add(NavigationBar.class.getResource("/css/homestyles.css").toExternalForm());
+
+		return homeScene;
+	}
+
+	public static BorderPane getRoot(){
 		Period currentForecast = WeatherAPI.getForecast(region, gridX, gridY).get(0);
 		hourlyForecast = MyWeatherAPI.getHourlyForecast(region,gridX,gridY);
-//		double[] minAndMax = MyWeatherAPI.getMinAndMaxTemperature(region, gridX, gridY).get(0);
+		double[] minAndMax = MyWeatherAPI.getMinAndMaxTemperatures(region, gridX, gridY).get(0).getValue();
 		if (hourlyForecast == null){
 			System.out.println("No forecast found");
 		}
@@ -37,18 +90,22 @@ public class HomeScreen extends SceneBuilder{
 		Button locationButton = getLocationButton();
 
 		Label temperatureLabel = new Label(hourlyForecast.get(0).temperature + "°");
-		Label weatherLabel = new Label(hourlyForecast.get(0).shortForecast);
-		weatherLabel.setTextFill(Color.web("#FCFFCB"));
-		weatherLabel.setFont(Font.font("Verdana", 14));
-
 		temperatureLabel.setFont(Font.font("Verdana", FontWeight.BOLD,50));
 		temperatureLabel.setTextFill(Color.rgb(255,255,255));
 		temperatureLabel.setEffect(dropShadow);
 
+		Label weatherLabel = new Label(hourlyForecast.get(0).shortForecast);
+		weatherLabel.setFont(Font.font("Verdana", 14));
+		weatherLabel.setTextFill(Color.web("#FCFFCB"));
+
+		Label minMaxText = new Label("L: " + (int)(minAndMax[0] * 1.8 + 32) + " H: " + (int)(minAndMax[1] * 1.8 + 32));
+		minMaxText.setFont(Font.font("Verdana", 13));
+		minMaxText.setTextFill(Color.web("#FCFFCB"));
+
 		HBox homeBoxOneTop = new HBox(locationButton); //Placed at the very top of the screen
 		homeBoxOneTop.setAlignment(Pos.CENTER);
 
-		VBox homeBoxOneCenter = new VBox(temperatureLabel, weatherLabel); //Root for the top portion of the screen
+		VBox homeBoxOneCenter = new VBox(temperatureLabel, weatherLabel, minMaxText); //Root for the top portion of the screen
 		homeBoxOneCenter.setAlignment(Pos.CENTER);
 
 		//--putting all the elements together for homeBoxOne (top portion of the screen)
@@ -57,16 +114,12 @@ public class HomeScreen extends SceneBuilder{
 		homeBoxOne.setTop(homeBoxOneTop);
 
 		//middle of homeboxone and two
-		Label descriptionText = new Label(currentForecast.detailedForecast);
+		TextArea descriptionText = new TextArea(currentForecast.detailedForecast);
 		descriptionText.setWrapText(true);
 		descriptionText.setFont(Font.font("Verdana", FontWeight.MEDIUM,12));
-		descriptionText.setTextFill(Color.rgb(255,255,255));
 		descriptionText.setEffect(dropShadow);
-
-		BorderPane descriptionBox = new BorderPane(descriptionText);
-		descriptionBox.setPrefSize(300, 70);
-		descriptionBox.setId("homeBox");
-		descriptionBox.setPadding(new Insets(10));
+		descriptionText.setEditable(false);
+		descriptionText.setPrefSize(300,70);
 
 		//---elements for homeBoxTwo (lower portion of screen)
 		//The bottom half of the screen is split into a left and right component
@@ -74,7 +127,7 @@ public class HomeScreen extends SceneBuilder{
 		ScrollPane hourlyForecastScroll = getHourlyScroll();
 
 		//---elements in homeBoxTwoLeft (left side of homeBoxTwo)
-		Label todayWeatherText = new Label("Today's Weather");
+		Label todayWeatherText = new Label("      Today's Weather");
 		todayWeatherText.setFont(Font.font("Verdana",FontWeight.BOLD, 16));
 		todayWeatherText.setTextFill(Color.rgb(255,255,255));
 		todayWeatherText.setPrefSize(220,18);
@@ -84,42 +137,95 @@ public class HomeScreen extends SceneBuilder{
 		VBox homeBoxTwoLeft = new VBox(todayWeatherText, hourlyForecastScroll);
 
 		//---elements in homeBoxTwoRight (right side of homeBoxTwo)
-		TextField alertsText = new TextField("Alerts");
-		alertsText.setPrefSize(100, 200);
-		alertsText.setEditable(false);
-		alertsText.setAlignment(Pos.TOP_LEFT);
-		alertsText.setId("homeBox");
+		TextArea alertsText = getAlertsText();
 
-		TextField image = new TextField("image");
-		image.setPrefSize(100, 100);
+		Image forecastImage = new Image(currentForecast.icon);
+		ImageView forecastView = new ImageView(forecastImage);
+		forecastView.setFitHeight(100);
+		forecastView.setFitWidth(100);
+		forecastView.setEffect(dropShadow);
 
-		VBox homeBoxTwoRight = new VBox(10, alertsText, image);
+		VBox homeBoxTwoRight = new VBox(10, forecastView, alertsText);
 
 		//--putting all elements together for homeBoxTwo (bottom portion of screen)
 		HBox homeBoxTwo = new HBox(10, homeBoxTwoLeft, homeBoxTwoRight);
 		homeBoxTwo.setAlignment(Pos.CENTER);
 
 		//--putting all elements together in BorderPane root (whole screen)
-		VBox centerRoot = new VBox(10, homeBoxOne, descriptionBox);
+		VBox centerRoot = new VBox(10, homeBoxOne, descriptionText);
 
 		BorderPane root = new BorderPane(centerRoot);
 		root.setPadding(new Insets(10, 10, 0, 10));
 		root.setBottom(homeBoxTwo); //aligns homeBoxTwo to the bottom of the screen
 
-		Image homeBackground = new Image("/images/matcha-background.jpg", 360, 640, false, true);
+		Image homeBackground = new Image("/images/plant_wallpaper.jpg", 360, 640, false, true);
 		BackgroundImage backgroundImage = new BackgroundImage(homeBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
 		root.setBackground(new Background(backgroundImage));
 
-		return new BorderPane(root);
+		return root;
+	}
+
+	private static TextArea getAlertsText(){
+		TextArea alertsText = new TextArea("Alerts: None");
+		alertsText.setWrapText(true);
+		alertsText.setFont(Font.font("Verdana", FontWeight.MEDIUM,12));
+		alertsText.setEffect(dropShadow);
+		alertsText.setEditable(false);
+		alertsText.setPrefSize(100, 200);
+		alertsText.setId("alertsText");
+
+		ArrayList<Alert> currAlerts = MyWeatherAPI.getActiveAlerts(latitude, longitude);
+		if(!currAlerts.isEmpty()){
+			Alert currAlert = currAlerts.get(0);
+			alertsText.setText("Alerts: " + currAlert.headline);
+
+			TextArea headlineText = new TextArea(currAlert.headline);
+			headlineText.setPrefSize(400,75);
+			headlineText.setEditable(false);
+			headlineText.setId("headlineText");
+
+			TextArea descriptionText = new TextArea(currAlert.description);
+			descriptionText.setPrefSize(400,250);
+			descriptionText.setEditable(false);
+
+			TextArea instructionText = new TextArea(currAlert.instruction);
+			instructionText.setPrefSize(400,250);
+			instructionText.setEditable(false);
+
+			VBox alertsBox = new VBox(headlineText, descriptionText, instructionText);
+
+			Scene nextScene = new Scene(alertsBox);
+			nextScene.getStylesheets().add(NavigationBar.class.getResource("/css/alerts.css").toExternalForm());
+
+			alertsDialog = new Stage();
+			alertsDialog.setScene(nextScene);
+			alertsDialog.setTitle("Active Alert");
+			alertsDialog.setResizable(false);
+			alertsDialog.initOwner(mainStage);
+
+			alertsText.setOnMouseClicked(e-> {
+				if(alertsDialog.isShowing()) {
+					alertsDialog.close();
+				}
+				else{
+					alertsDialog.show();
+				}
+			});
+		}
+
+		return alertsText;
 	}
 
 	//Creates dialog window to prompt user for location
 	private static Button getLocationButton(){
 		Button locationButton = new Button(getLocation());
 		locationButton.setPrefSize(150,40);
-		locationButton.setFont(Font.font("Verdana", FontWeight.SEMI_BOLD, 14));
+		locationButton.setId("locationButton");
 
 		locationButton.setOnAction(e -> {
+			if(alertsDialog != null && alertsDialog.isShowing()){
+				alertsDialog.close();
+			}
 
 			Stage locationDialog = new Stage();
 
@@ -158,7 +264,12 @@ public class HomeScreen extends SceneBuilder{
 
 			Label time = new Label(hourTime);
 			time.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));
-			time.setTextFill(Color.rgb(255,255,255));
+			if(currentPeriod.isDaytime){
+				time.setTextFill(Color.web("#FFFFFF"));
+			}
+			else{
+				time.setTextFill(Color.web("#B3B3B3"));
+			}
 			time.setEffect(dropShadow);
 
 			Label temp = new Label(String.valueOf(currentPeriod.temperature) + "°");
@@ -168,10 +279,10 @@ public class HomeScreen extends SceneBuilder{
 
 			Label rainChance = new Label(currentPeriod.probabilityOfPrecipitation.value + "%");
 			rainChance.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-			rainChance.setTextFill(Color.web("4B62F3FF"));
+			rainChance.setTextFill(Color.web("#7393B3"));
 			rainChance.setEffect(dropShadow);
 
-			HBox statusBox = new HBox(30, time, temp, rainChance);
+			HBox statusBox = new HBox(30, time, temp,rainChance);
 			statusBox.setAlignment(Pos.CENTER);
 
 			Label wind = new Label("Wind: " + currentPeriod.windSpeed + " " + currentPeriod.windDirection);

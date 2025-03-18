@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -18,7 +19,17 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class DailyForecast extends SceneBuilder{
-	public static BorderPane getScreen(){
+	public static Scene getScene(){
+		BorderPane root = getRoot();
+		BorderPane rootPane = new BorderPane(root);
+		rootPane.setBottom(NavigationBar.getNavigationBar());
+
+		Scene scene = new Scene(rootPane, 360, 640);
+		scene.getStylesheets().add(NavigationBar.class.getResource("/css/style.css").toExternalForm());
+
+		return scene;
+	}
+	public static BorderPane getRoot(){
 		//https://api.weather.gov/gridpoints/LOT/77,70/forecast/hourly
 
 		//Testing!!!
