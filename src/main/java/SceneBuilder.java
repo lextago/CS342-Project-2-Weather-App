@@ -1,7 +1,7 @@
 import javafx.stage.Stage;
 
 public class SceneBuilder {
-	public static Stage mainStage;
+	public static Stage stage;
 
 	public static String city;
 	public static String state;
@@ -36,11 +36,11 @@ public class SceneBuilder {
 	}
 
 	public void setStage(Stage stage) {
-		mainStage = stage;
+		SceneBuilder.stage = stage;
 	}
 
 	public Stage getStage() {
-		return mainStage;
+		return stage;
 	}
 
 }
