@@ -1,0 +1,20 @@
+.default-color0.chart-series-line {
+    -fx-stroke.delete;
+    -fx-stroke: rgb(0, 100, 255);
+}
+
+.default-color1.chart-series-line {
+    -fx-stroke.delete;
+    -fx-stroke: rgb(255, 0, 0);
+}
+
+.chart-plot-background{
+    -fx-background-color: #e2ecfe;
+}
+
+.chart-vertical-grid-lines{
+    -fx-stroke: #0a2767
+}
+
+
+

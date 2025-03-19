@@ -5,6 +5,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -27,6 +28,7 @@ public class DailyForecast extends SceneBuilder{
 
 		return scene;
 	}
+
 	public static BorderPane getRoot(){
 		//https://api.weather.gov/gridpoints/LOT/77,70/forecast/hourly
 
@@ -128,6 +130,12 @@ public class DailyForecast extends SceneBuilder{
 		Image homeBackground = new Image("/images/backgrounds/matcha-background.jpg", 360, 640, false, true);
 		BackgroundImage backgroundImage = new BackgroundImage(homeBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
 		root.setBackground(new Background(backgroundImage));
+
+		Image puppyImage = new Image("/images/puppy.jpg", 80, 80, false, true);
+		ImageView puppyView = new ImageView(puppyImage);
+		puppyView.setLayoutX(80);
+		puppyView.setLayoutY(80);
+		root.getChildren().add(puppyView);
 
 		return new BorderPane(root);
 	}
