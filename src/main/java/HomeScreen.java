@@ -128,7 +128,7 @@ public class HomeScreen extends SceneBuilder{
 			minMaxText.setText("L: " + (int)(minAndMax[0] * 1.8 + 32) + " H: " + (int)(minAndMax[1] * 1.8 + 32));
 		}
 		else{
-			minMaxText.setText("L: " + (int)minAndMax[0] + (int)minAndMax[1]);
+			minMaxText.setText("L: " + (int)minAndMax[0] + " H: " + (int)minAndMax[1]);
 		}
 
 		minMaxText.setFont(Font.font("Verdana", 13));

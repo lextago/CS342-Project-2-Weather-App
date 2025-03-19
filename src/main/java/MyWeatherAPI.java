@@ -23,7 +23,7 @@ public class MyWeatherAPI extends WeatherAPI {
 		String requestString = "https://api.mapbox.com/search/geocode/v6/forward?"+
 		"place=" + city + "&" + "region=" + state + "&country=United&States&access_token=" + System.getenv("MAPBOX_API_KEY");
 
-		System.out.println(requestString);
+		System.out.println("coords: " + requestString);
 
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(requestString))
@@ -135,6 +135,7 @@ public class MyWeatherAPI extends WeatherAPI {
 
 	public static ArrayList<Pair<String, double[]>> getMinAndMaxTemperatures(String region, int gridx, int gridy){
 		String requestString = "https://api.weather.gov/gridpoints/" + region + "/" + gridx + "," + gridy;
+		System.out.println("min max: " + requestString);
 
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(requestString))
@@ -271,7 +272,7 @@ public class MyWeatherAPI extends WeatherAPI {
 	//Extending from the WeatherAPI class, retrieves the forecast for each hourly period instead of every 12-hour period.
 	public static ArrayList<HourlyPeriod> getHourlyForecast(String region, int gridx, int gridy) {
 		String requestString = "https://api.weather.gov/gridpoints/"+region+"/"+String.valueOf(gridx)+","+String.valueOf(gridy)+"/forecast/hourly";
-		System.out.println(requestString); //debug purposes
+		System.out.println("hourly: " + requestString); //debug purposes
 
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(requestString))
@@ -288,7 +289,7 @@ public class MyWeatherAPI extends WeatherAPI {
 		//needed to create a separate package (hourlyWeather) used to serialize these objects.
 		HourlyRoot r = getHourlyObject(response.body());
 
-		System.out.println(r.properties.generatedAt); //debugging purposes, to check if the forecast displayed is delayed
+		System.out.println("forecast generated at: " + r.properties.generatedAt); //debugging purposes, to check if the forecast displayed is delayed
 
 		if(r == null){
 			System.err.println("Failed to parse JSon");
