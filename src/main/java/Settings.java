@@ -4,13 +4,20 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class Settings extends SceneBuilder{
+	private static VBox root;
+	private static DropShadow dropShadow = new DropShadow();
+	private static BorderPane settingBoxThemes, settingBoxTemperature, settingBoxHour;
+
 	public static Scene getScene(){
 		BorderPane root = getRoot();
 		BorderPane rootPane = new BorderPane(root);
@@ -21,55 +28,90 @@ public class Settings extends SceneBuilder{
 
 		return scene;
 	}
+
 	public static BorderPane getRoot() {
-		// Creates all text
-
 		Label settingsLabel = new Label("Settings");
-		settingsLabel.setTextFill(Color.rgb(0,0,0));
-		settingsLabel.setFont(new Font("Inter", 40));
+		settingsLabel.setTextFill(Color.WHITE);
+		settingsLabel.setFont(Font.font("Inter", FontWeight.BOLD ,40));
 		settingsLabel.setPadding(new Insets(20,20,20,20));
+		settingsLabel.setEffect(dropShadow);
 
-		Label sizeText = new Label("Text Size");
 		Label themesText = new Label("Themes");
 		Label temperatureText = new Label("Temperature");
 		Label chooseHourText = new Label("24hr/12hr");
 
 		// Creates options for dropdowns
+		List<String> themesOptions = Arrays.asList("Matcha", "Cocoa", "Milk", "Ube");
+		List<String> temperatureOptions = Arrays.asList("Fahrenheit", "Celsius");
+		List<String> hourOptions = Arrays.asList("12hr", "24hr");
 
-		String[] sizeOptions = {"S", "M", "L"};
-		String[] themesOptions = {"Matcha", "Cocoa", "Milk", "Coffee", "Ube"};
-		String[] temperatureOptions = {"Fahrenheit", "Celsius"};
-		String[] hourOptions = {"24hr", "12hr"};
+		ComboBox<String> themesDropdown = new ComboBox(FXCollections.observableArrayList(themesOptions));
+		themesDropdown.getSelectionModel().select(themesOptions.indexOf(theme));
+		themesDropdown.setOnAction(e->{
+			String theme = themesDropdown.getValue();
+			switch(theme){
+				case "Matcha":
+					SceneBuilder.setTheme("Matcha");
+					SceneBuilder.setBackgroundImage("/images/backgrounds/plant_wallpaper.jpg");
+					updateBoxThemes("#8A9D6C");
+					root.setBackground(new Background(backgroundImage));
+					break;
+				case "Cocoa":
+					SceneBuilder.setTheme("Cocoa");
+					SceneBuilder.setBackgroundImage("/images/backgrounds/brown_background.jpg");
+					updateBoxThemes(" #a47148");
+					root.setBackground(new Background(backgroundImage));
+					break;
+				case "Milk":
+					SceneBuilder.setTheme("Milk");
+					SceneBuilder.setBackgroundImage("/images/backgrounds/cream_background.jpg");
+					updateBoxThemes("#d5bdaf");
+					root.setBackground(new Background(backgroundImage));
+					break;
+				case "Ube":
+					SceneBuilder.setTheme("Ube");
+					SceneBuilder.setBackgroundImage("/images/backgrounds/purple_background.jpg");
+					updateBoxThemes("#9d4edd");
+					root.setBackground(new Background(backgroundImage));
+					break;
+			}
+		});
 
-		HBox settingBoxText = createSettingsBox(sizeText, sizeOptions);
-		HBox settingBoxThemes = createSettingsBox(themesText, themesOptions);
-		HBox settingBoxTemperature = createSettingsBox(temperatureText, temperatureOptions);
-		HBox settingBoxHour = createSettingsBox(chooseHourText, hourOptions);
+		ComboBox<String> temperatureDropdown = new ComboBox(FXCollections.observableArrayList(temperatureOptions));
+		temperatureDropdown.getSelectionModel().select(temperatureOptions.indexOf(temperatureUnit));
+		temperatureDropdown.setOnAction(e->{
+			String unit = temperatureDropdown.getValue();
+			SceneBuilder.temperatureUnit = unit;
+		});
 
-		// Displays VBox in order from top to bottom of the screen
+		ComboBox<String> hourDropdown = new ComboBox(FXCollections.observableArrayList(hourOptions));
+		hourDropdown.getSelectionModel().select(hourOptions.indexOf(timeFormat));
+		hourDropdown.setOnAction(e->{
+			String unit = hourDropdown.getValue();
+			SceneBuilder.timeFormat = unit;
+		});
 
-		VBox settingBoxTop = new VBox(4, settingsLabel, settingBoxText, settingBoxThemes, settingBoxTemperature);
-		VBox settingBoxBottom = new VBox(4, settingBoxHour);
+		settingBoxThemes = createSettingsBox(themesText, themesDropdown);
+		settingBoxTemperature = createSettingsBox(temperatureText, temperatureDropdown);
+		settingBoxHour = createSettingsBox(chooseHourText, hourDropdown);
 
-		// Sets the background
 
-		BackgroundFill background_fill = new BackgroundFill(Color.LIGHTGREEN, CornerRadii.EMPTY, Insets.EMPTY);
-		Background background = new Background(background_fill);
+		//Putting all the elements together
+		VBox settingBoxTop = new VBox(4, settingsLabel, settingBoxThemes, settingBoxTemperature, settingBoxHour);
+		settingBoxTop.setAlignment(Pos.CENTER);
 
-		Image matchaBackground = new Image("/images/matcha-background.jpg", 360, 640, false, true);
-		BackgroundImage backgroundImage = new BackgroundImage(matchaBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
-
-		VBox root = new VBox(20, settingBoxTop, settingBoxBottom);
-
+		root = new VBox(20, settingBoxTop);
 		root.setBackground(new Background(backgroundImage));
 
 		BorderPane borderPane = new BorderPane(root);
 		return borderPane;
 	}
 
-	private static HBox createSettingsBox(Label text, String[] options){
+	//creating and designing each settings box
+	private static BorderPane createSettingsBox(Label text, ComboBox dropdown){
 		text.setFont(new Font("Inter", 20));
-		ComboBox dropdown = new ComboBox(FXCollections.observableArrayList(options));
+		text.setTextFill(Color.WHITE);
+		text.setEffect(dropShadow);
 		dropdown.setPrefWidth(100);
 
 		BorderPane settingPanel = new BorderPane();
@@ -78,12 +120,29 @@ public class Settings extends SceneBuilder{
 
 		settingPanel.setPadding(new Insets(5));
 		settingPanel.setBorder(Border.stroke(Color.BLACK));
-		settingPanel.setStyle("-fx-background-color: #FFFFFF;");
-		settingPanel.setPrefWidth(340);
+		settingPanel.setMaxWidth(340);
+		settingPanel.setOpacity(0.9);
 
-		HBox settingBox = new HBox(settingPanel);
-		settingBox.setAlignment(Pos.CENTER);
+		switch(theme){
+			case "Matcha":
+				settingPanel.setStyle("-fx-background-color: #8A9D6C;");
+				break;
+			case "Cocoa":
+				settingPanel.setStyle("-fx-background-color: #a47148;");
+				break;
+			case "Milk":
+				settingPanel.setStyle("-fx-background-color: #d5bdaf;");
+				break;
+			case "Ube":
+				settingPanel.setStyle("-fx-background-color: #9d4edd;");
+				break;
+		}
+		return settingPanel;
+	}
 
-		return settingBox;
+	private static void updateBoxThemes(String color){
+		settingBoxThemes.setStyle("-fx-background-color: " + color + ";");
+		settingBoxTemperature.setStyle("-fx-background-color: " + color + ";");
+		settingBoxHour.setStyle("-fx-background-color: " + color + ";");
 	}
 }

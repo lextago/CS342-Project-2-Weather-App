@@ -1,26 +1,33 @@
+import javafx.scene.image.Image;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundRepeat;
 import javafx.stage.Stage;
 
 public class SceneBuilder {
 	public static Stage stage;
 
-//	public static String city;
-//	public static String state;
 	public static String location;
 	public static double latitude;
 	public static double longitude;
 	public static String region;
 	public static int gridX;
 	public static int gridY;
+	public static String theme;
+	public static BackgroundImage backgroundImage;
+	public static String temperatureUnit;
+	public static String timeFormat;
 
 	public SceneBuilder(){
-//		city = "Chicago";
-//		state = "Illinois";
 		location = "Chicago, Illinois";
 		latitude = 41.882;
 		longitude = -87.6324;
 		region = "LOT";
 		gridX = 75;
 		gridY = 73;
+		theme = "Matcha";
+		temperatureUnit = "Fahrenheit";
+		timeFormat = "12hr";
+		setBackgroundImage("/images/backgrounds/plant_wallpaper.jpg");
 	}
 
 	public static void setGridpoint(String region, int gridX, int gridY){
@@ -40,6 +47,15 @@ public class SceneBuilder {
 
 	public static String getLocation(){
 		return location;
+	}
+
+	public static void setBackgroundImage(String url){
+		Image image = new Image(url, 360, 640, false, true);
+		backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
+	}
+
+	public static void setTheme(String theme){
+		SceneBuilder.theme = theme;
 	}
 
 	public void setStage(Stage stage) {

@@ -63,16 +63,36 @@ public class HomeScreen extends SceneBuilder{
 		matchaView.setLayoutX(260);
 		matchaView.setLayoutY(-25);
 
-		Label matchaLabel = new Label("\"♡ I love you\nso matcha ♡\"");
-		matchaLabel.setFont(Font.font("Lucida Calligraphy", 12));
-		matchaLabel.setTextFill(Color.WHITE);
-		pane.getChildren().add(matchaLabel);
-		matchaLabel.setLayoutX(15);
-		matchaLabel.setLayoutY(15);
+		Label quoteLabel = new Label();
+		quoteLabel.setFont(Font.font("Lucida Calligraphy", 12));
+		quoteLabel.setTextFill(Color.WHITE);
+		pane.getChildren().add(quoteLabel);
+		quoteLabel.setLayoutX(15);
+		quoteLabel.setLayoutY(15);
 
 
 		Scene homeScene = new Scene(pane, 360, 640);
-		homeScene.getStylesheets().add(NavigationBar.class.getResource("/css/homestyles.css").toExternalForm());
+		String stylesheet = "/style.css";
+		switch(theme){
+			case "Matcha":
+				stylesheet = "/css/home_matcha.css";
+				quoteLabel.setText("\"♡ I love you\nso matcha ♡\"");
+				break;
+			case "Cocoa":
+				stylesheet = "/css/home_cocoa.css";
+				quoteLabel.setText("\"♡ I love you\na choco-lot ♡\"");
+				break;
+			case "Milk":
+				stylesheet = "/css/home_milk.css";
+				quoteLabel.setText("\"♡ I love you\na latte ♡\"");
+				quoteLabel.setTextFill(Color.BLACK);
+				break;
+			case "Ube":
+				stylesheet = "/css/home_ube.css";
+				quoteLabel.setText("\"♡ Will 'u-be'\n     mine? ♡\"");
+				break;
+		}
+		homeScene.getStylesheets().add(NavigationBar.class.getResource(stylesheet).toExternalForm());
 
 		return homeScene;
 	}
@@ -89,18 +109,30 @@ public class HomeScreen extends SceneBuilder{
 		//---elements for homeBoxOne (top portion of screen)
 		Button locationButton = getLocationButton();
 
-		Label temperatureLabel = new Label(hourlyForecast.get(0).temperature + "°");
+		int temperature = hourlyForecast.get(0).temperature;
+		if(temperatureUnit.equals("Celsius")) {
+			temperature = (temperature - 32) * 5 / 9;
+		}
+
+		Label temperatureLabel = new Label(temperature + "°");
 		temperatureLabel.setFont(Font.font("Verdana", FontWeight.BOLD,50));
 		temperatureLabel.setTextFill(Color.rgb(255,255,255));
 		temperatureLabel.setEffect(dropShadow);
 
 		Label weatherLabel = new Label(hourlyForecast.get(0).shortForecast);
 		weatherLabel.setFont(Font.font("Verdana", 14));
-		weatherLabel.setTextFill(Color.web("#FCFFCB"));
+		weatherLabel.setId("label");
 
-		Label minMaxText = new Label("L: " + (int)(minAndMax[0] * 1.8 + 32) + " H: " + (int)(minAndMax[1] * 1.8 + 32));
+		Label minMaxText = new Label();
+		if(temperatureUnit.equals("Fahrenheit")){
+			minMaxText.setText("L: " + (int)(minAndMax[0] * 1.8 + 32) + " H: " + (int)(minAndMax[1] * 1.8 + 32));
+		}
+		else{
+			minMaxText.setText("L: " + (int)minAndMax[0] + (int)minAndMax[1]);
+		}
+
 		minMaxText.setFont(Font.font("Verdana", 13));
-		minMaxText.setTextFill(Color.web("#FCFFCB"));
+		minMaxText.setId("label");
 
 		HBox homeBoxOneTop = new HBox(locationButton); //Placed at the very top of the screen
 		homeBoxOneTop.setAlignment(Pos.CENTER);
@@ -158,8 +190,8 @@ public class HomeScreen extends SceneBuilder{
 		root.setPadding(new Insets(10, 10, 0, 10));
 		root.setBottom(homeBoxTwo); //aligns homeBoxTwo to the bottom of the screen
 
-		Image homeBackground = new Image("/images/plant_wallpaper.jpg", 360, 640, false, true);
-		BackgroundImage backgroundImage = new BackgroundImage(homeBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
+//		Image homeBackground = new Image("/images/backgrounds/plant_wallpaper.jpg", 360, 640, false, true);
+//		BackgroundImage backgroundImage = new BackgroundImage(homeBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
 		root.setBackground(new Background(backgroundImage));
 
 		return root;
@@ -259,7 +291,13 @@ public class HomeScreen extends SceneBuilder{
 			HourlyPeriod currentPeriod = hourlyForecast.get(i);
 
 			Date currentHour = currentPeriod.startTime;
-			SimpleDateFormat localDateFormat = new SimpleDateFormat("hh a");
+			SimpleDateFormat localDateFormat;
+			if(timeFormat.equals("24hr")){
+				localDateFormat = new SimpleDateFormat("HH:mm");
+			}
+			else{
+				localDateFormat = new SimpleDateFormat("hh a");
+			}
 			String hourTime = localDateFormat.format(currentHour);
 
 			Label time = new Label(hourTime);
@@ -272,7 +310,12 @@ public class HomeScreen extends SceneBuilder{
 			}
 			time.setEffect(dropShadow);
 
-			Label temp = new Label(String.valueOf(currentPeriod.temperature) + "°");
+			int temperature = currentPeriod.temperature;
+			if(temperatureUnit.equals("Celsius")){
+				temperature = (temperature - 32) * 5 / 9;
+			}
+
+			Label temp = new Label(temperature + "°");
 			temp.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
 			temp.setTextFill(Color.rgb(255,255,255));
 			temp.setEffect(dropShadow);

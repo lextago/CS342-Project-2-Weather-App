@@ -125,7 +125,7 @@ public class DailyForecast extends SceneBuilder{
 
 		root = new VBox(30, dailyForecastPane, hBox);
 
-		Image homeBackground = new Image("/images/matcha-background.jpg", 360, 640, false, true);
+		Image homeBackground = new Image("/images/backgrounds/matcha-background.jpg", 360, 640, false, true);
 		BackgroundImage backgroundImage = new BackgroundImage(homeBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
 		root.setBackground(new Background(backgroundImage));
 

@@ -1,25 +1,25 @@
 #shelfTop{
-    -fx-background-image: url("../images/shelf_top.jpeg");
+    -fx-background-image: url("../images/shelf/shelf_top.jpeg");
 }
 
 #shelfTop:hover {
-    -fx-background-image: url("../images/shelf_top_hover.jpeg");
+    -fx-background-image: url("../images/shelf/shelf_top_hover.jpeg");
 }
 
 #shelfMiddle{
-    -fx-background-image: url("../images/shelf_middle.jpeg");
+    -fx-background-image: url("../images/shelf/shelf_middle.jpeg");
 }
 
 #shelfMiddle:hover {
-    -fx-background-image: url("../images/shelf_middle_hover.jpeg");
+    -fx-background-image: url("../images/shelf/shelf_middle_hover.jpeg");
 }
 
 #shelfBottom{
-    -fx-background-image: url("../images/shelf_bottom.jpeg");
+    -fx-background-image: url("../images/shelf/shelf_bottom.jpeg");
 }
 
 #shelfBottom:hover {
-    -fx-background-image: url("../images/shelf_bottom_hover.jpeg");
+    -fx-background-image: url("../images/shelf/shelf_bottom_hover.jpeg");
 }
 
 #shelfScroll .scroll-bar:vertical{
@@ -33,19 +33,19 @@
 #homeBox{
     -fx-opacity: 0.8;
     -fx-text-fill: white;
-    -fx-background-color: #8A9D6C;
+    -fx-background-color: #a47148;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
 
 #alertsText:hover{
-    -fx-background-color: #a2b87f;
+    -fx-background-color: #bc8a5f;
 }
 
 .text-area{
     -fx-opacity: 0.8;
     -fx-text-fill: white;
-    -fx-background-color: #8A9D6C;
+    -fx-background-color: #a47148;
     -fx-background-radius: 10;
     -fx-border-radius: 10;
 }
@@ -84,4 +84,8 @@
 
 #navigationButton:hover {
     -fx-background-color: rgba(255, 255, 255, 0.25);
+}
+
+#label {
+    -fx-text-fill: #FCFFCB;
 }

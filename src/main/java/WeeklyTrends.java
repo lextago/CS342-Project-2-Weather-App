@@ -1,9 +1,6 @@
 import javafx.scene.Scene;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.beans.Observable;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.chart.*;
@@ -19,7 +16,6 @@ import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 
 public class WeeklyTrends extends SceneBuilder {
 	public static Scene getScene(){
@@ -179,7 +175,7 @@ public class WeeklyTrends extends SceneBuilder {
 		dropdownAndTitle.setAlignment(Pos.CENTER);
 		VBox root = new VBox(30, dropdownAndTitle, chartBox, allWeekDays);
 
-		Image homeBackground = new Image("/images/matcha-background.jpg", 360, 640, false, true);
+		Image homeBackground = new Image("/images/backgrounds/matcha-background.jpg", 360, 640, false, true);
 		BackgroundImage backgroundImage = new BackgroundImage(homeBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
 		root.setBackground(new Background(backgroundImage));
 
