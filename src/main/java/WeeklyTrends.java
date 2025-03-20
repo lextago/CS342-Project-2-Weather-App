@@ -69,10 +69,13 @@ public class WeeklyTrends extends SceneBuilder {
 
 		ArrayList<Pair<String, double[]>> minAndMax = MyWeatherAPI.getMinAndMaxTemperatures(region, gridX, gridY);
 
+		HBox allWeekDays = new HBox();
+
 		numDaysChoices.setOnAction(e -> {;
 
 			String dayChoice = numDaysChoices.getValue();
 			int dayChoiceNumber = Integer.parseInt(dayChoice.split("")[0]);
+			allWeekDays.getChildren().clear();
 
 			lineChart.getData().clear();
 			days.clear();
@@ -96,6 +99,29 @@ public class WeeklyTrends extends SceneBuilder {
 				DayOfWeek dayOfWeek = dateTime.getDayOfWeek(); // Gets the day of the week
 				String dayOfWeekAbbreviation = dayOfWeek.toString().substring(0,3);
 
+				String dayOfWeekTwoLetter = dayOfWeek.toString().substring(0,2);
+				String dayOfWeekOneLetter = dayOfWeek.toString().substring(0,1);
+				if (dayOfWeekTwoLetter.equals("TH") || dayOfWeekTwoLetter.equals("SU")) {
+					Label weekDayLabel = new Label(dayOfWeekTwoLetter);
+					weekDayLabel.setFont(new Font("Inter", 40));
+					BorderPane weekDayPane = new BorderPane();
+					weekDayPane.setCenter(weekDayLabel);
+					weekDayPane.setPadding(new Insets(5));
+					weekDayPane.setStyle("-fx-background-color: #FFFFFF;");
+					weekDayPane.setBorder(Border.stroke(Color.BLACK));
+					allWeekDays.getChildren().add(weekDayPane);
+				} else{
+					Label weekDayLabel = new Label(dayOfWeekOneLetter);
+					weekDayLabel.setFont(new Font("Inter", 40));
+					BorderPane weekDayPane = new BorderPane();
+					weekDayPane.setCenter(weekDayLabel);
+					weekDayPane.setPadding(new Insets(5));
+					weekDayPane.setStyle("-fx-background-color: #FFFFFF;");
+					weekDayPane.setBorder(Border.stroke(Color.BLACK));
+					allWeekDays.getChildren().add(weekDayPane);
+				}
+
+
 				days.add(dayOfWeekAbbreviation);
 				xAxis.setCategories(days);
 				int min = (int) minAndMax.get(i).getValue()[0];
@@ -114,7 +140,7 @@ public class WeeklyTrends extends SceneBuilder {
 		});
 		HBox chartBox = new HBox(lineChart);
 
-		Label mondayLabel = new Label("M");
+		/*Label mondayLabel = new Label("M");
 		mondayLabel.setFont(new Font("Inter", 40));
 
 		Label tuesdayLabel = new Label("T");
@@ -175,9 +201,9 @@ public class WeeklyTrends extends SceneBuilder {
 		sundayPane.setCenter(sundayLabel);
 		sundayPane.setPadding(new Insets(5));
 		sundayPane.setStyle("-fx-background-color: #FFFFFF;");
-		sundayPane.setBorder(Border.stroke(Color.BLACK));
+		sundayPane.setBorder(Border.stroke(Color.BLACK));*/
 
-		HBox allWeekDays = new HBox(mondayPane, tuesdayPane, wednesdayPane, thursdayPane, fridayPane, saturdayPane, sundayPane);
+		//HBox allWeekDays = new HBox(mondayPane, tuesdayPane, wednesdayPane, thursdayPane, fridayPane, saturdayPane, sundayPane);
 		allWeekDays.setAlignment(Pos.CENTER);
 
 		VBox dropdownAndTitle = new VBox(4, weeklyTrendsPane, numDaysAndTempBox, chartBox);
