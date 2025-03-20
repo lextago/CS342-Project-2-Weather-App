@@ -38,12 +38,8 @@
     -fx-background-color: transparent;
 }
 
-#shelfScroll .scroll-bar:horizontal .increment-button{
-    -fx-background-color: transparent;
-}
-
-#shelfScroll .scroll-bar:horizontal .decrement-button{
-    -fx-background-color: transparent;
+#shelfScroll .scroll-pane > .corner {
+    -fx-background-color: transparent ;
 }
 
 #shelfScroll .scroll-bar:horizontal .increment-button .increment-arrow{
