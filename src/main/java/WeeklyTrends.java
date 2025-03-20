@@ -1,6 +1,8 @@
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.geometry.Insets;
@@ -24,8 +26,20 @@ public class WeeklyTrends extends SceneBuilder {
 		BorderPane root = getRoot();
 		BorderPane rootPane = new BorderPane(root);
 		rootPane.setBottom(NavigationBar.getNavigationBar());
+		rootPane.setPrefSize(360, 640);
 
-		Scene scene = new Scene(rootPane, 360, 640);
+		Pane pane = new Pane();
+		pane.getChildren().add(rootPane);
+
+		Image dog = new Image("/images/dog_peeking.png", 135, 90, false, true);
+		ImageView dogView = new ImageView(dog);
+
+		pane.getChildren().add(dogView);
+		dogView.setLayoutX(160);
+		dogView.setLayoutY(526);
+
+
+		Scene scene = new Scene(pane, 360, 640);
 		scene.getStylesheets().add(SceneBuilder.class.getResource("/css/trends.css").toExternalForm());
 
 		return scene;

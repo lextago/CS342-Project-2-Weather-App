@@ -1,5 +1,6 @@
-#headlineText .text-area{
+#headlineText{
     -fx-font-weight: BOLD;
+    -fx-font-size: 15;
 }
 
 .text-area{
@@ -20,4 +21,10 @@
 }
 .text-area .scroll-pane .content{
     -fx-background-color: transparent;
+}
+.text-area .scroll-pane .scroll-bar:vertical{
+    -fx-background-color: transparent;
+}
+.text-area .scroll-pane .scroll-bar:vertical .thumb{
+    -fx-background-color: #588157;
 }

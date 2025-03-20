@@ -38,7 +38,7 @@
     -fx-background-color: transparent;
 }
 
-#shelfScroll .scroll-pane > .corner {
+#shelfScroll .scroll-pane .corner {
     -fx-background-color: transparent ;
 }
 

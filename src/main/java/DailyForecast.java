@@ -37,8 +37,19 @@ public class DailyForecast extends SceneBuilder{
 		BorderPane root = getRoot();
 		BorderPane rootPane = new BorderPane(root);
 		rootPane.setBottom(NavigationBar.getNavigationBar());
+		rootPane.setPrefSize(360,640);
 
-		Scene scene = new Scene(rootPane, 360, 640);
+		Pane pane = new Pane();
+		pane.getChildren().add(rootPane);
+
+		Image cat = new Image("/images/cat_peeking.png", 90, 90, false, true);
+		ImageView catView = new ImageView(cat);
+
+		pane.getChildren().add(catView);
+		catView.setLayoutX(89);
+		catView.setLayoutY(526);
+
+		Scene scene = new Scene(pane, 360, 640);
 		stylesheet = "style.css";
 		switch(theme){
 			case "Matcha":
@@ -70,6 +81,7 @@ public class DailyForecast extends SceneBuilder{
 		numDaysChoices.setPromptText("Select Days");
 		numDaysChoices.setId("comboBox");
 		numDaysChoices.getItems().addAll("3 Day", "5 Day", "7 Day");
+		numDaysChoices.setPrefWidth(200);
 
 		hourlyScrollPane = new ScrollPane();
 		hourlyScrollPane.setPrefHeight(600);

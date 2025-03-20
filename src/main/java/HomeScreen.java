@@ -35,7 +35,7 @@ public class HomeScreen extends SceneBuilder{
 		Pane pane = new Pane();
 		pane.getChildren().add(rootPane);
 
-		Image plantImage = new Image("/images/indoor_plant.png", 100, 100, false, true);
+		Image plantImage = new Image("/images/small_indoor_plant.png", 70, 70, false, true);
 		ImageView plantView = new ImageView(plantImage);
 
 		Image catImage = new Image("/images/cat_lamp.png", 150, 150, false, true);
@@ -48,15 +48,15 @@ public class HomeScreen extends SceneBuilder{
 		ImageView matchaView = new ImageView(matcha);
 
 		pane.getChildren().add(plantView);
-		plantView.setLayoutX(-20);
-		plantView.setLayoutY(200);
+		plantView.setLayoutX(-10);
+		plantView.setLayoutY(223);
 
 		pane.getChildren().add(catView);
 		catView.setLayoutX(260);
 		catView.setLayoutY(125);
 
 		pane.getChildren().add(pinguView);
-		pinguView.setLayoutX(300);
+		pinguView.setLayoutX(-23);
 		pinguView.setLayoutY(520);
 
 		pane.getChildren().add(matchaView);
@@ -212,22 +212,37 @@ public class HomeScreen extends SceneBuilder{
 			alertsText.setText("Alerts: " + currAlert.headline);
 
 			TextArea headlineText = new TextArea(currAlert.headline);
-			headlineText.setPrefSize(400,75);
+			headlineText.setPrefSize(400,100);
 			headlineText.setEditable(false);
 			headlineText.setId("headlineText");
 
 			TextArea descriptionText = new TextArea(currAlert.description);
-			descriptionText.setPrefSize(400,250);
+			descriptionText.setPrefSize(400,300);
 			descriptionText.setEditable(false);
 
-			TextArea instructionText = new TextArea(currAlert.instruction);
-			instructionText.setPrefSize(400,250);
+			TextArea instructionText = new TextArea("Instructions: " + currAlert.instruction);
+			instructionText.setPrefSize(400,150);
 			instructionText.setEditable(false);
 
 			VBox alertsBox = new VBox(headlineText, descriptionText, instructionText);
 
 			Scene nextScene = new Scene(alertsBox);
-			nextScene.getStylesheets().add(SceneBuilder.class.getResource("/css/alerts.css").toExternalForm());
+			String stylesheet = "/style.css";
+			switch(theme){
+				case "Matcha":
+					stylesheet = "/css/alerts/alerts_matcha.css";
+					break;
+				case "Cocoa":
+					stylesheet = "/css/alerts/alerts_cocoa.css";
+					break;
+				case "Milk":
+					stylesheet = "/css/alerts/alerts_milk.css";
+					break;
+				case "Ube":
+					stylesheet = "/css/alerts/alerts_ube.css";
+					break;
+			}
+			nextScene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
 
 			alertsDialog = new Stage();
 			alertsDialog.setScene(nextScene);
@@ -261,10 +276,9 @@ public class HomeScreen extends SceneBuilder{
 
 			Stage locationDialog = new Stage();
 
-			LocationDetails locationScreen = new LocationDetails(locationDialog);
-			BorderPane root = LocationDetails.getScreen();
+			LocationDetails locationScreen = new LocationDetails(locationDialog, theme);
 
-			Scene nextScene = new Scene(root, 315, 560);
+			Scene nextScene = LocationDetails.getScene();
 
 			locationDialog.setScene(nextScene);
 			locationDialog.setTitle("LocationDetails");

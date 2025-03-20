@@ -28,17 +28,26 @@ public class LocationDetails extends SceneBuilder{
 	private static TextField cityInput, stateInput, longitudeInput, latitudeInput;
 	private static Label results;
 
-	public LocationDetails(Stage stage) {
+	public LocationDetails(Stage stage, String theme) {
 		dialogStage = stage;
 	}
 
-	public static BorderPane getScreen() {
+	public static Scene getScene(){
+		BorderPane root = getRoot();
+		Scene scene = new Scene(root, 315, 560);
+
+		scene.getStylesheets().add(SceneBuilder.class.getResource("/css/location.css").toExternalForm());
+
+		return scene;
+	}
+
+	public static BorderPane getRoot() {
 		//Building the upper half portion of the screen
 		Button back = new Button("Back");
-		Button info = new Button("Info");
+		Button random = new Button("Random");
 		BorderPane locationTop = new BorderPane();
 		locationTop.setLeft(back);
-		locationTop.setRight(info);
+		locationTop.setRight(random);
 		locationTop.setPrefHeight(40);
 
 		//No changes are made when back is clicked
@@ -76,7 +85,8 @@ public class LocationDetails extends SceneBuilder{
 		Button submitButton = new Button("Submit");
 		HBox submitHBox = new HBox(submitButton);
 
-		results = new Label("Results :");
+		results = new Label("Results : (Please be patient while the app loads!)");
+		results.setStyle("-fx-font-size: 11");
 		locationsScroll = new ScrollPane();
 		locationsScroll.setPrefHeight(225);
 
@@ -93,6 +103,7 @@ public class LocationDetails extends SceneBuilder{
 		root.setTop(locationTop);
 		root.setBottom(locationsBox);
 		root.setPadding(new Insets(10));
+		root.setId("rootBox");
 
 		submitButton.setOnAction(LocationDetails::submitHandler);
 
@@ -109,8 +120,8 @@ public class LocationDetails extends SceneBuilder{
 
 		detailPane.setPadding(new Insets(5));
 		detailPane.setBorder(Border.stroke(Color.BLACK));
-		detailPane.setStyle("-fx-background-color: #FFFFFF;");
 		detailPane.setPrefWidth(295);
+		detailPane.setId("hbox");
 
 		HBox detailBox = new HBox(detailPane);
 		detailBox.setAlignment(Pos.CENTER);
@@ -193,7 +204,7 @@ public class LocationDetails extends SceneBuilder{
 			Button locationButton = new Button(coordinatesArray.get(i).getKey()); //The text for the button is the address of the location
 			buttonsArray.add(locationButton);
 
-			locationButton.setPrefSize(200, 50);
+			locationButton.setPrefSize(280, 50);
 			locationButton.setAlignment(Pos.CENTER);
 			locationsBox.getChildren().add(locationButton);
 
@@ -219,5 +230,9 @@ public class LocationDetails extends SceneBuilder{
 		locationScroll.setPrefHeight(225);
 
 		return locationScroll;
+	}
+
+	private static void getRandomLocation(){
+
 	}
 }
