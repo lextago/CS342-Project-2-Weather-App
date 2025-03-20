@@ -58,6 +58,7 @@ public class DailyForecast extends SceneBuilder{
 
 		return scene;
 	}
+
 	public static BorderPane getRoot(){
 		minAndMaxTemps = MyWeatherAPI.getMinAndMaxTemperatures(region, gridX, gridY);
 		periods = WeatherAPI.getForecast(region, gridX, gridY);
