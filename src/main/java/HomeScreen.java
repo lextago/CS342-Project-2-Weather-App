@@ -13,15 +13,12 @@ import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import weather.Period;
-import weather.WeatherAPI;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class HomeScreen extends SceneBuilder{
-	private static ArrayList<HourlyPeriod> hourlyForecast;
-
 	private static BorderPane prevHourBox; //static global variable used for lambda method which requires 'final' variables
 	static DropShadow dropShadow = new DropShadow();
 	static Stage alertsDialog;
@@ -94,22 +91,26 @@ public class HomeScreen extends SceneBuilder{
 		}
 		homeScene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
 
+		stage.setOnCloseRequest(e -> {
+			if(alertsDialog != null && alertsDialog.isShowing()){
+				alertsDialog.close();
+			}
+		});
+
 		return homeScene;
 	}
 
 	public static BorderPane getRoot(){
-		Period currentForecast = WeatherAPI.getForecast(region, gridX, gridY).get(0);
-		hourlyForecast = MyWeatherAPI.getHourlyForecast(region,gridX,gridY);
-		double[] minAndMax = MyWeatherAPI.getMinAndMaxTemperatures(region, gridX, gridY).get(0).getValue();
-		if (hourlyForecast == null){
-			System.out.println("No forecast found");
-		}
+		Period currentForecast = periods.get(0);
+		double[] minAndMax = minAndMaxTemps.get(0).getValue();
 
 		//Home screen is split into two main components: the top half and bottom half.
 		//---elements for homeBoxOne (top portion of screen)
 		Button locationButton = getLocationButton();
 
-		int temperature = hourlyForecast.get(0).temperature;
+		HourlyPeriod hourlyForecast = hourlyPeriods.get(0);
+
+		int temperature = hourlyForecast.temperature;
 		if(temperatureUnit.equals("Celsius")) {
 			temperature = convertFahrenheitToCelsius(temperature);
 		}
@@ -119,7 +120,7 @@ public class HomeScreen extends SceneBuilder{
 		temperatureLabel.setTextFill(Color.rgb(255,255,255));
 		temperatureLabel.setEffect(dropShadow);
 
-		Label weatherLabel = new Label(hourlyForecast.get(0).shortForecast);
+		Label weatherLabel = new Label(hourlyForecast.shortForecast);
 		weatherLabel.setFont(Font.font("Verdana", 14));
 		weatherLabel.setId("label");
 
@@ -206,7 +207,6 @@ public class HomeScreen extends SceneBuilder{
 		alertsText.setPrefSize(100, 200);
 		alertsText.setId("alertsText");
 
-		ArrayList<Alert> currAlerts = MyWeatherAPI.getActiveAlerts(latitude, longitude);
 		if(!currAlerts.isEmpty()){
 			Alert currAlert = currAlerts.get(0);
 			alertsText.setText("Alerts: " + currAlert.headline);
@@ -275,8 +275,7 @@ public class HomeScreen extends SceneBuilder{
 			}
 
 			Stage locationDialog = new Stage();
-
-			LocationDetails locationScreen = new LocationDetails(locationDialog, theme);
+			locationStage = locationDialog;
 
 			Scene nextScene = LocationDetails.getScene();
 
@@ -302,7 +301,7 @@ public class HomeScreen extends SceneBuilder{
 		ArrayList<BorderPane> hourBoxes = new ArrayList<>();
 
 		for(int i = 0; i <= 24; i++){
-			HourlyPeriod currentPeriod = hourlyForecast.get(i);
+			HourlyPeriod currentPeriod = hourlyPeriods.get(i);
 
 			Date currentHour = currentPeriod.startTime;
 			SimpleDateFormat localDateFormat;

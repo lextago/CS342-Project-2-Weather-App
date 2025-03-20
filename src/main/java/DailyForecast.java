@@ -46,7 +46,7 @@ public class DailyForecast extends SceneBuilder{
 		ImageView catView = new ImageView(cat);
 
 		pane.getChildren().add(catView);
-		catView.setLayoutX(89);
+		catView.setLayoutX(100);
 		catView.setLayoutY(526);
 
 		Scene scene = new Scene(pane, 360, 640);

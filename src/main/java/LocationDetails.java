@@ -11,7 +11,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 
 public class LocationDetails extends SceneBuilder{
-	public static Stage dialogStage;
 
 	private static ArrayList<Pair<String, int[]>> gridpoints;
 	private static ArrayList<Pair<String, Double[]>> coordinatesArray;
@@ -29,11 +27,49 @@ public class LocationDetails extends SceneBuilder{
 	private static TextField cityInput, stateInput, longitudeInput, latitudeInput;
 	private static Label results;
 
-	public LocationDetails(Stage stage, String theme) {
-		dialogStage = stage;
-	}
+	private static List<String> randomLocations;
+	private static List<Double[]> randomCoordinates;
+	private static List<String> randomRegions;
+	private static List<Integer> randomGridX;
+	private static List<Integer> randomGridY;
 
 	public static Scene getScene(){
+		randomLocations = List.of(
+				"Chicago, Illinois",
+				"Los Angeles, California",
+				"Fairbanks, Alaska",
+				"Phoenix, Arizona",
+				"Washington, D.C.",
+				"Austin, Texas",
+				"New York City, New York",
+				"Seattle, Washington",
+				"Atlanta, Georgia",
+				"Miami, Florida"
+		);
+		randomCoordinates = List.of(
+				new Double[]{41.882, -87.6324}, //chicago
+				new Double[]{34.0481, -118.2542}, //LA
+				new Double[]{64.8363, -147.7181}, //fairbanks
+				new Double[]{33.4482, -112.0751}, //phoenix
+				new Double[]{38.895, -77.0367}, //dc
+				new Double[]{30.2681, -97.7428}, //austin
+				new Double[]{40.7127, -74.006}, //nyc
+				new Double[]{47.6032, -122.3303}, //seattle
+				new Double[]{33.7508, -84.3899}, //atlanta
+				new Double[]{25.7734, -80.1919} //miami
+		);
+		randomRegions = List.of(
+				"LOT", "LOX", "AFG", "PSR", "LWX", "EWX", "OKX", "SEW", "FFC", "MFL"
+		);
+
+		randomGridX = List.of(
+				75, 155, 492, 159, 97, 156, 33, 125, 51, 110
+		);
+
+		randomGridY = List.of(
+				73, 45, 119, 58, 71, 91, 35, 68, 87, 51
+		);
+
 		BorderPane root = getRoot();
 		Scene scene = new Scene(root, 315, 560);
 
@@ -53,7 +89,7 @@ public class LocationDetails extends SceneBuilder{
 
 		//No changes are made when back is clicked
 		back.setOnAction(e -> {
-			dialogStage.close();
+			locationStage.close();
 		});
 
 		random.setOnAction(LocationDetails::getRandomLocation);
@@ -220,12 +256,13 @@ public class LocationDetails extends SceneBuilder{
 				setLocation(coords.getKey());
 				setCoordinates(coords.getValue()[0], coords.getValue()[1]);
 				setGridpoint(buttonInfo.getKey(), buttonInfo.getValue()[0], buttonInfo.getValue()[1]);
+				updateData();
 
 				//prepares the home screen to send the user back
 				stage.setScene(HomeScreen.getScene());
 
 				//closes the dialog window
-				dialogStage.close();
+				locationStage.close();
 			});
 		}
 
@@ -239,33 +276,9 @@ public class LocationDetails extends SceneBuilder{
 		gridpoints = new ArrayList<>();
 		coordinatesArray = new ArrayList<>();
 
-		List<String> locations = Arrays.asList(
-			"Chicago, Illinois",
-			"Los Angeles, California",
-			"Fairbanks, Alaska",
-			"Phoenix, Arizona",
-			"Washington, D.C.",
-			"Austin, Texas",
-			"New York City, New York",
-			"Seattle, Washington",
-			"Atlanta, Georgia",
-			"Miami, Florida"
-		);
-		List<String> regions = Arrays.asList(
-			"LOT", "LOX", "AFG", "PSR", "LWX", "EWX", "OKX", "SEW", "FFC", "MFL"
-		);
-
-		List<Integer> gridX = Arrays.asList(
-			75, 155, 492, 159, 97, 156, 33, 125, 51, 110
-		);
-
-		List<Integer> gridY = Arrays.asList(
-			73, 45, 119, 58, 71, 91, 35, 68, 87, 51
-		);
-
 		int randomIndex = (int)	(Math.random() * 10);
-		Pair<String, Double[]> coords = new Pair<>(locations.get(randomIndex), new Double[]{0.0,0.0});
-		Pair<String, int[]> gridpoint = new Pair<>(regions.get(randomIndex), new int[]{gridX.get(randomIndex), gridY.get(randomIndex)});
+		Pair<String, Double[]> coords = new Pair<>(randomLocations.get(randomIndex), randomCoordinates.get(randomIndex));
+		Pair<String, int[]> gridpoint = new Pair<>(randomRegions.get(randomIndex), new int[]{randomGridX.get(randomIndex), randomGridY.get(randomIndex)});
 		coordinatesArray.add(coords);
 		gridpoints.add(gridpoint);
 

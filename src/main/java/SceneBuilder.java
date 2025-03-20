@@ -1,10 +1,17 @@
+import hourlyWeather.HourlyPeriod;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BackgroundImage;
 import javafx.scene.layout.BackgroundRepeat;
 import javafx.stage.Stage;
+import javafx.util.Pair;
+import weather.Period;
+import weather.WeatherAPI;
+
+import java.util.ArrayList;
 
 public class SceneBuilder {
 	public static Stage stage;
+	public static Stage locationStage;
 
 	public static String location;
 	public static double latitude;
@@ -17,6 +24,11 @@ public class SceneBuilder {
 	public static String temperatureUnit;
 	public static String timeFormat;
 
+	public static ArrayList<HourlyPeriod> hourlyPeriods;
+	public static ArrayList<Period> periods;
+	public static ArrayList<Pair<String, double[]>> minAndMaxTemps;
+	public static ArrayList<Alert> currAlerts;
+
 	public SceneBuilder(){
 		location = "Chicago, Illinois";
 		latitude = 41.882;
@@ -28,6 +40,7 @@ public class SceneBuilder {
 		temperatureUnit = "Fahrenheit";
 		timeFormat = "12hr";
 		setBackgroundImage("/images/backgrounds/plant_wallpaper.jpg");
+		updateData();
 	}
 
 	public static void setGridpoint(String region, int gridX, int gridY){
@@ -47,6 +60,13 @@ public class SceneBuilder {
 
 	public static String getLocation(){
 		return location;
+	}
+
+	public static void updateData(){
+		hourlyPeriods = MyWeatherAPI.getHourlyForecast(region, gridX, gridY);
+		periods = WeatherAPI.getForecast(region, gridX, gridY);
+		minAndMaxTemps = MyWeatherAPI.getMinAndMaxTemperatures(region, gridX, gridY);
+		currAlerts = MyWeatherAPI.getActiveAlerts(latitude, longitude);
 	}
 
 	public static void setBackgroundImage(String url){
