@@ -16,6 +16,7 @@ import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class LocationDetails extends SceneBuilder{
 	public static Stage dialogStage;
@@ -54,6 +55,8 @@ public class LocationDetails extends SceneBuilder{
 		back.setOnAction(e -> {
 			dialogStage.close();
 		});
+
+		random.setOnAction(LocationDetails::getRandomLocation);
 
 		Label locationLabel = new Label("Enter City/State (MAPBOX_API_KEY required) :");
 		Label cityLabel = new Label("City:");
@@ -232,7 +235,42 @@ public class LocationDetails extends SceneBuilder{
 		return locationScroll;
 	}
 
-	private static void getRandomLocation(){
+	private static void getRandomLocation(ActionEvent event){
+		gridpoints = new ArrayList<>();
+		coordinatesArray = new ArrayList<>();
 
+		List<String> locations = Arrays.asList(
+			"Chicago, Illinois",
+			"Los Angeles, California",
+			"Fairbanks, Alaska",
+			"Phoenix, Arizona",
+			"Washington, D.C.",
+			"Austin, Texas",
+			"New York City, New York",
+			"Seattle, Washington",
+			"Atlanta, Georgia",
+			"Miami, Florida"
+		);
+		List<String> regions = Arrays.asList(
+			"LOT", "LOX", "AFG", "PSR", "LWX", "EWX", "OKX", "SEW", "FFC", "MFL"
+		);
+
+		List<Integer> gridX = Arrays.asList(
+			75, 155, 492, 159, 97, 156, 33, 125, 51, 110
+		);
+
+		List<Integer> gridY = Arrays.asList(
+			73, 45, 119, 58, 71, 91, 35, 68, 87, 51
+		);
+
+		int randomIndex = (int)	(Math.random() * 10);
+		Pair<String, Double[]> coords = new Pair<>(locations.get(randomIndex), new Double[]{0.0,0.0});
+		Pair<String, int[]> gridpoint = new Pair<>(regions.get(randomIndex), new int[]{gridX.get(randomIndex), gridY.get(randomIndex)});
+		coordinatesArray.add(coords);
+		gridpoints.add(gridpoint);
+
+		locationsScroll = getLocationScroll();
+		locationsBox = new VBox(5, results, locationsScroll);
+		root.setBottom(locationsBox);
 	}
 }
