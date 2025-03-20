@@ -75,24 +75,24 @@ public class HomeScreen extends SceneBuilder{
 		String stylesheet = "/style.css";
 		switch(theme){
 			case "Matcha":
-				stylesheet = "/css/home_matcha.css";
+				stylesheet = "/css/home/home_matcha.css";
 				quoteLabel.setText("\"♡ I love you\nso matcha ♡\"");
 				break;
 			case "Cocoa":
-				stylesheet = "/css/home_cocoa.css";
+				stylesheet = "/css/home/home_cocoa.css";
 				quoteLabel.setText("\"♡ I love you\na choco-lot ♡\"");
 				break;
 			case "Milk":
-				stylesheet = "/css/home_milk.css";
+				stylesheet = "/css/home/home_milk.css";
 				quoteLabel.setText("\"♡ I love you\na latte ♡\"");
 				quoteLabel.setTextFill(Color.BLACK);
 				break;
 			case "Ube":
-				stylesheet = "/css/home_ube.css";
+				stylesheet = "/css/home/home_ube.css";
 				quoteLabel.setText("\"♡ Will 'u-be'\n     mine? ♡\"");
 				break;
 		}
-		homeScene.getStylesheets().add(NavigationBar.class.getResource(stylesheet).toExternalForm());
+		homeScene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
 
 		return homeScene;
 	}
@@ -111,7 +111,7 @@ public class HomeScreen extends SceneBuilder{
 
 		int temperature = hourlyForecast.get(0).temperature;
 		if(temperatureUnit.equals("Celsius")) {
-			temperature = (temperature - 32) * 5 / 9;
+			temperature = convertFahrenheitToCelsius(temperature);
 		}
 
 		Label temperatureLabel = new Label(temperature + "°");
@@ -124,13 +124,15 @@ public class HomeScreen extends SceneBuilder{
 		weatherLabel.setId("label");
 
 		Label minMaxText = new Label();
+		int min = (int) minAndMax[0];
+		int max = (int) minAndMax[1];
+
 		if(temperatureUnit.equals("Fahrenheit")){
-			minMaxText.setText("L: " + (int)(minAndMax[0] * 1.8 + 32) + " H: " + (int)(minAndMax[1] * 1.8 + 32));
-		}
-		else{
-			minMaxText.setText("L: " + (int)minAndMax[0] + " H: " + (int)minAndMax[1]);
+			min = convertCelsiusToFahrenheit(min);
+			max = convertCelsiusToFahrenheit(max);
 		}
 
+		minMaxText.setText("L: " + min + "°" + " H: " + max + "°");
 		minMaxText.setFont(Font.font("Verdana", 13));
 		minMaxText.setId("label");
 
@@ -190,8 +192,6 @@ public class HomeScreen extends SceneBuilder{
 		root.setPadding(new Insets(10, 10, 0, 10));
 		root.setBottom(homeBoxTwo); //aligns homeBoxTwo to the bottom of the screen
 
-//		Image homeBackground = new Image("/images/backgrounds/plant_wallpaper.jpg", 360, 640, false, true);
-//		BackgroundImage backgroundImage = new BackgroundImage(homeBackground, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
 		root.setBackground(new Background(backgroundImage));
 
 		return root;
@@ -227,7 +227,7 @@ public class HomeScreen extends SceneBuilder{
 			VBox alertsBox = new VBox(headlineText, descriptionText, instructionText);
 
 			Scene nextScene = new Scene(alertsBox);
-			nextScene.getStylesheets().add(NavigationBar.class.getResource("/css/alerts.css").toExternalForm());
+			nextScene.getStylesheets().add(SceneBuilder.class.getResource("/css/alerts.css").toExternalForm());
 
 			alertsDialog = new Stage();
 			alertsDialog.setScene(nextScene);
@@ -312,7 +312,7 @@ public class HomeScreen extends SceneBuilder{
 
 			int temperature = currentPeriod.temperature;
 			if(temperatureUnit.equals("Celsius")){
-				temperature = (temperature - 32) * 5 / 9;
+				temperature = convertFahrenheitToCelsius(temperature);
 			}
 
 			Label temp = new Label(temperature + "°");

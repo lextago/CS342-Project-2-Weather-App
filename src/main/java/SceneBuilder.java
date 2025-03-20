@@ -62,6 +62,14 @@ public class SceneBuilder {
 		SceneBuilder.stage = stage;
 	}
 
+	public static int convertFahrenheitToCelsius(int fahrenheit){
+		return (fahrenheit - 32) * 5 / 9;
+	}
+
+	public static int convertCelsiusToFahrenheit(int celsius){
+		return (celsius * 9 / 5) + 32;
+	}
+
 	public Stage getStage() {
 		return stage;
 	}

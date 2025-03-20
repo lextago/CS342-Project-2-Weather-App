@@ -1,25 +1,25 @@
 #shelfTop{
-    -fx-background-image: url("../images/shelf/shelf_top.jpeg");
+    -fx-background-image: url("../../images/shelf/shelf_top.jpeg");
 }
 
 #shelfTop:hover {
-    -fx-background-image: url("../images/shelf/shelf_top_hover.jpeg");
+    -fx-background-image: url("../../images/shelf/shelf_top_hover.jpeg");
 }
 
 #shelfMiddle{
-    -fx-background-image: url("../images/shelf/shelf_middle.jpeg");
+    -fx-background-image: url("../../images/shelf/shelf_middle.jpeg");
 }
 
 #shelfMiddle:hover {
-    -fx-background-image: url("../images/shelf/shelf_middle_hover.jpeg");
+    -fx-background-image: url("../../images/shelf/shelf_middle_hover.jpeg");
 }
 
 #shelfBottom{
-    -fx-background-image: url("../images/shelf/shelf_bottom.jpeg");
+    -fx-background-image: url("../../images/shelf/shelf_bottom.jpeg");
 }
 
 #shelfBottom:hover {
-    -fx-background-image: url("../images/shelf/shelf_bottom_hover.jpeg");
+    -fx-background-image: url("../../images/shelf/shelf_bottom_hover.jpeg");
 }
 
 #shelfScroll .scroll-bar:vertical{

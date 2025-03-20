@@ -24,7 +24,7 @@ public class Settings extends SceneBuilder{
 		rootPane.setBottom(NavigationBar.getNavigationBar());
 
 		Scene scene = new Scene(rootPane, 360, 640);
-		scene.getStylesheets().add(NavigationBar.class.getResource("/css/style.css").toExternalForm());
+		scene.getStylesheets().add(SceneBuilder.class.getResource("/css/style.css").toExternalForm());
 
 		return scene;
 	}
