@@ -88,7 +88,7 @@ public class DailyForecast extends SceneBuilder{
 
 		Label dailyForecast = new Label("Daily Forecast");
 		dailyForecast.setTextFill(Color.rgb(255,255,255));
-		dailyForecast.setFont(new Font("Inter", 40));
+		dailyForecast.setFont(Font.font("Verdana",FontWeight.BOLD, 40));
 		dailyForecast.setEffect(dropShadow);
 
 		VBox rootTop = new VBox(5, dailyForecast, numDaysChoices);
@@ -122,20 +122,20 @@ public class DailyForecast extends SceneBuilder{
 			double[] minAndMax = minAndMaxTemps.get(i).getValue();
 			int tonightIndex = forecastIndex + 1;
 
-			//only one 12-hour period during the night, thus today and tonight's periods are the same
-			if(periods.get(0).name.equals("Tonight") && i == 0){
-				tonightIndex = 0;
-			}
-
 			Period todayPeriod = periods.get(forecastIndex);
 			Period tonightPeriod = periods.get(tonightIndex);
 
-			//increments forecastIndex
-			if(periods.get(0).name.equals("Tonight") && i == 0){
+			//sometimes the api's list of objects start at tonight which is a problem because of
+			//overlapping dates, thus have to increment the index used to retrieve the next forecast
+			//by a different number
+
+ 			//also the api's list can start with overnight when using it during midnight which leads to
+			//duplicate dates, which is a bit unfortunate (when this happens, the same day will appear 3 times in the api)
+			if((periods.get(0).name.equals("Tonight") || periods.get(0).name.equals("Overnight")) && i == 0){
 				forecastIndex++; //incrementing by one if the first forecast only had one period
 			}
 			else{
-				forecastIndex+=2; //increments by two because each day holds the forecast for the day and night
+				forecastIndex+=2; //normally increments by two because each day holds the forecast for the day and night
 			}
 
 			//Converting from ISO string to date object
@@ -148,8 +148,13 @@ public class DailyForecast extends SceneBuilder{
 			DayOfWeek dayOfWeek = dateTime.getDayOfWeek();
 			String dayString = dayOfWeek.toString().substring(0,3); //getting day abbreviation
 
-			Label dateLabel = new Label(dayString + " " + month + "/" + monthDay);
+			String dateLabelString = dayString + " " + month + "/" + monthDay;
+			if(periods.get(i).name.equals("Overnight")){
+				dateLabelString = "(Overnight) " + dateLabelString;
+			}
+			Label dateLabel = new Label(dateLabelString);
 			dateLabel.setId("dailyLabel");
+
 			int min = (int) minAndMax[0];
 			int max = (int) minAndMax[1];
 			if(temperatureUnit.equals("Fahrenheit")){
@@ -202,7 +207,8 @@ public class DailyForecast extends SceneBuilder{
 			BorderPane todayPane = get12HourForecastPane(todayPeriod);
 
 			VBox dayVBox;
-			if(todayPeriod.name.equals("Tonight")) { //if there is only one period, no need to make a pane for the night
+			//if there is only one period, no need to make a pane for the night
+			if(todayPeriod.name.equals("Tonight") || todayPeriod.name.equals("Overnight")) {
 				dayVBox = new VBox(dayPaneTop, descriptionPane, todayPane);
 			}
 			else {

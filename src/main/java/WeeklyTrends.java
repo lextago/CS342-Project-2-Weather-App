@@ -45,7 +45,6 @@ public class WeeklyTrends extends SceneBuilder {
 		ComboBox<String> numDaysChoices = new ComboBox<>(); // Dropdown of all day choices
 		numDaysChoices.setId("daysComboBox");
 		numDaysChoices.setPromptText("Select Days");
-		numDaysChoices.setId("daysComboBox");
 		numDaysChoices.getItems().addAll("3 Day", "5 Day", "7 Day");
 		numDaysChoices.setEffect(HomeScreen.dropShadow);
 		numDaysChoices.setPrefWidth(230);
@@ -94,7 +93,7 @@ public class WeeklyTrends extends SceneBuilder {
 			XYChart.Series xyValuesTwo = new XYChart.Series();
 			xyValuesTwo.setName("High");
 
-			for (int i = 0; i < dayChoiceNumber; i++) {
+			for (int i = 1; i < dayChoiceNumber + 1; i++) {
 				Pair<String, double[]> pair = minAndMax.get(i);
 				String dateString = pair.getKey();
 
