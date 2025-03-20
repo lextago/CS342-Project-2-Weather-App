@@ -70,7 +70,7 @@ public class Settings extends SceneBuilder{
 					break;
 				case "Ube":
 					SceneBuilder.setTheme("Ube");
-					SceneBuilder.setBackgroundImage("/images/backgrounds/purple_background.jpg");
+					SceneBuilder.setBackgroundImage("/images/backgrounds/ube_background.jpg");
 					updateBoxThemes("#9d4edd");
 					root.setBackground(new Background(backgroundImage));
 					break;

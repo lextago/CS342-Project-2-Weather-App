@@ -1,20 +1,30 @@
-.default-color0.chart-series-line {
-    -fx-stroke.delete;
-    -fx-stroke: rgb(0, 100, 255);
+#firstChart .chart-series-line.series0,
+#firstChart .chart-line-symbol.series0 {
+    -fx-stroke: blue;
+    -fx-background-color: blue;
 }
 
-.default-color1.chart-series-line {
-    -fx-stroke.delete;
-    -fx-stroke: rgb(255, 0, 0);
+#firstChart .chart-series-line.series1,
+#firstChart .chart-line-symbol.series1 {
+    -fx-stroke: red;
+    -fx-background-color: red
 }
 
-.chart-plot-background{
+#firstChart .chart-plot-background{
     -fx-background-color: #e2ecfe;
+    -fx-background-image: url("../images/shelf/wood_background.jpg");
+
 }
 
-.chart-vertical-grid-lines{
+#firstChart .chart-vertical-grid-lines{
     -fx-stroke: #0a2767
 }
+
+#firstChart .chart-horizontal-grid-lines{
+    -fx-stroke: transparent;
+}
+
+
 
 
 
