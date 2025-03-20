@@ -1,3 +1,13 @@
+#navigationButton {
+    -fx-background-color: transparent;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+}
+
+#navigationButton:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.25);
+}
+
 #firstChart .chart-series-line.series0,
 #firstChart .chart-line-symbol.series0 {
     -fx-stroke: blue;
