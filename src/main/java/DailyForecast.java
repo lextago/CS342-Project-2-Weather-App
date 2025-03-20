@@ -67,6 +67,13 @@ public class DailyForecast extends SceneBuilder{
 		}
 		scene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
 
+		//makes sure to close the hourlyDialog stage when the main stage is closed
+		stage.setOnCloseRequest(e -> {
+			if(hourlyDialog != null && hourlyDialog.isShowing()){
+				hourlyDialog.close();
+			}
+		});
+
 		return scene;
 	}
 
@@ -166,6 +173,7 @@ public class DailyForecast extends SceneBuilder{
 			}
 			Label dateLabel = new Label(dateLabelString);
 			dateLabel.setId("dailyLabel");
+			dateLabel.setTextFill(Color.WHITE);
 
 			int min = (int) minAndMax[0];
 			int max = (int) minAndMax[1];
@@ -175,13 +183,14 @@ public class DailyForecast extends SceneBuilder{
 			}
 			Label minMaxLabel = new Label("L: " + min +"°" + " H: " + max + "°");
 			minMaxLabel.setId("dailyLabel");
+			minMaxLabel.setTextFill(Color.WHITE);
 
 			//creating the top box to display the day, min, and max temps
 			BorderPane dayPaneTop = new BorderPane();
 			dayPaneTop.setLeft(dateLabel);
 			dayPaneTop.setRight(minMaxLabel);
 			dayPaneTop.setPadding(new Insets(10));
-			dayPaneTop.setPrefWidth(345);
+			dayPaneTop.setPrefWidth(330);
 			dayPaneTop.setPrefHeight(40);
 			dayPaneTop.setId("dailyBox");
 			dayPanes.add(dayPaneTop);
@@ -199,10 +208,11 @@ public class DailyForecast extends SceneBuilder{
 				BorderPane hourlyRoot = getHourlyForecastRoot(hourlyIndex, paneIndex);
 				hourlyRoot.setBackground(new Background(backgroundImage));
 
-				Scene nextScene = new Scene(hourlyRoot, 360, 640);
+				Scene nextScene = new Scene(hourlyRoot, 340, 600);
 				nextScene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
-				hourlyDialog.setScene(nextScene);
 
+				hourlyDialog.setResizable(false);
+				hourlyDialog.setScene(nextScene);
 				hourlyDialog.show();
 			});
 
@@ -290,25 +300,25 @@ public class DailyForecast extends SceneBuilder{
 		TextArea description = new TextArea(currPeriod.detailedForecast);
 		description.setEditable(false);
 		description.setWrapText(true);
-		description.setMaxWidth(220);
+		description.setMaxWidth(200);
 		description.setMaxHeight(150);
 		description.setEffect(dropShadow);
 
 		Image forecastImage = new Image(currPeriod.icon);
 		ImageView forecastView = new ImageView(forecastImage);
-		forecastView.setFitHeight(110);
-		forecastView.setFitWidth(110);
+		forecastView.setFitHeight(100);
+		forecastView.setFitWidth(100);
 		forecastView.setEffect(dropShadow);
 
 		for(int i = startIndex; i < endIndex; i++){
 			HourlyPeriod currHour = hourlyPeriods.get(i);
 
 			Label hour = new Label( hourFormat.format(currHour.startTime));
+			hour.setId("dailyLabel");
 			hour.setTextFill(Color.WHITE);
-			hour.setFont(Font.font("Verdana", 14));
 
 			if(!currHour.isDaytime){
-				hour.setTextFill(Color.web("#5a5a5a"));
+				hour.setTextFill(Color.web("#C0C0C0"));
 			}
 
 			int tempValue = currHour.temperature;
@@ -317,9 +327,10 @@ public class DailyForecast extends SceneBuilder{
 			}
 			Label temperature = new Label(tempValue + "°");
 			temperature.setId("dailyLabel");
+			temperature.setStyle("-fx-text-fill: white;");
 
 			Label rainChance = new Label(currHour.probabilityOfPrecipitation.value + "%");
-			rainChance.setFont(Font.font("Verdana", 14));
+			rainChance.setId("dailyLabel");
 			if(currHour.probabilityOfPrecipitation.value == 0){
 				rainChance.setTextFill(Color.web("#36454f"));
 			}
@@ -333,14 +344,14 @@ public class DailyForecast extends SceneBuilder{
 			humidity.setId("dailyBottomLabel");
 
 			BorderPane hourPaneTop = new BorderPane();
-			hourPaneTop.setPrefSize(300, 25);
+			hourPaneTop.setPrefSize(290, 25);
 			hourPaneTop.setLeft(hour);
 			hourPaneTop.setCenter(temperature);
 			hourPaneTop.setRight(rainChance);
 			hourPaneTop.setPadding(new Insets(5));
 
 			BorderPane hourPaneBottom = new BorderPane();
-			hourPaneBottom.setPrefSize(300, 25);
+			hourPaneBottom.setPrefSize(290, 25);
 			hourPaneBottom.setLeft(wind);
 			hourPaneBottom.setRight(humidity);
 			hourPaneBottom.setPadding(new Insets(5));
