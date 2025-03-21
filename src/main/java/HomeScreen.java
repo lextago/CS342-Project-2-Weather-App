@@ -21,7 +21,7 @@ import java.util.Date;
 public class HomeScreen extends SceneBuilder{
 	private static BorderPane prevHourBox; //static global variable used for lambda method which requires 'final' variables
 	static DropShadow dropShadow = new DropShadow();
-	static Stage alertsDialog;
+	static Stage alertsDialog; //Dialog stage used to display alerts in the area
 
 	public static Scene getScene(){
 		BorderPane root = getRoot();
@@ -29,6 +29,8 @@ public class HomeScreen extends SceneBuilder{
 		rootPane.setBottom(NavigationBar.getNavigationBar());
 		rootPane.setPrefSize(360,640);
 
+		//Pane is the abstract class for layout panes that has no constraints
+		//This allows the ability to freely move its children along the screen
 		Pane pane = new Pane();
 		pane.getChildren().add(rootPane);
 
@@ -67,8 +69,6 @@ public class HomeScreen extends SceneBuilder{
 		quoteLabel.setLayoutX(15);
 		quoteLabel.setLayoutY(15);
 
-
-		Scene homeScene = new Scene(pane, 360, 640);
 		String stylesheet = "/style.css";
 		switch(theme){
 			case "Matcha":
@@ -89,8 +89,11 @@ public class HomeScreen extends SceneBuilder{
 				quoteLabel.setText("\"♡ Will 'u-be'\n     mine? ♡\"");
 				break;
 		}
+
+		Scene homeScene = new Scene(pane, 360, 640);
 		homeScene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
 
+		//Ensures that the alerts dialog stage is closed with the main stage
 		stage.setOnCloseRequest(e -> {
 			if(alertsDialog != null && alertsDialog.isShowing()){
 				alertsDialog.close();
@@ -100,55 +103,52 @@ public class HomeScreen extends SceneBuilder{
 		return homeScene;
 	}
 
+	//Creates the root for the scene
 	public static BorderPane getRoot(){
+		HourlyPeriod hourlyForecast = hourlyPeriods.get(0);
 		Period currentForecast = periods.get(0);
 		double[] minAndMax = minAndMaxTemps.get(0).getValue();
-
-		//Home screen is split into two main components: the top half and bottom half.
-		//---elements for homeBoxOne (top portion of screen)
-		Button locationButton = getLocationButton();
-
-		HourlyPeriod hourlyForecast = hourlyPeriods.get(0);
 
 		int temperature = hourlyForecast.temperature;
 		if(temperatureUnit.equals("Celsius")) {
 			temperature = convertFahrenheitToCelsius(temperature);
 		}
 
-		Label temperatureLabel = new Label(temperature + "°");
-		temperatureLabel.setFont(Font.font("Verdana", FontWeight.BOLD,50));
-		temperatureLabel.setTextFill(Color.rgb(255,255,255));
-		temperatureLabel.setEffect(dropShadow);
-
-		Label weatherLabel = new Label(hourlyForecast.shortForecast);
-		weatherLabel.setFont(Font.font("Verdana", 14));
-		weatherLabel.setId("label");
-
-		Label minMaxText = new Label();
 		int min = (int) minAndMax[0];
 		int max = (int) minAndMax[1];
-
 		if(temperatureUnit.equals("Fahrenheit")){
 			min = convertCelsiusToFahrenheit(min);
 			max = convertCelsiusToFahrenheit(max);
 		}
 
-		minMaxText.setText("L: " + min + "°" + " H: " + max + "°");
+		//Elements for homeBoxOne (top part of the screen)
+		Button locationButton = getLocationButton();
+
+		Label temperatureLabel = new Label(temperature + "°");
+		temperatureLabel.setFont(Font.font("Verdana", FontWeight.BOLD,50));
+		temperatureLabel.setTextFill(Color.rgb(255,255,255));
+		temperatureLabel.setEffect(dropShadow);
+
+		Label forecastLabel = new Label(hourlyForecast.shortForecast);
+		forecastLabel.setFont(Font.font("Verdana", 14));
+		forecastLabel.setId("label");
+
+		Label minMaxText = new Label("L: " + min + "°" + " H: " + max + "°");
 		minMaxText.setFont(Font.font("Verdana", 13));
 		minMaxText.setId("label");
 
-		HBox homeBoxOneTop = new HBox(locationButton); //Placed at the very top of the screen
+		HBox homeBoxOneTop = new HBox(locationButton);
 		homeBoxOneTop.setAlignment(Pos.CENTER);
 
-		VBox homeBoxOneCenter = new VBox(temperatureLabel, weatherLabel, minMaxText); //Root for the top portion of the screen
+		VBox homeBoxOneCenter = new VBox(temperatureLabel, forecastLabel, minMaxText);
 		homeBoxOneCenter.setAlignment(Pos.CENTER);
 
-		//--putting all the elements together for homeBoxOne (top portion of the screen)
+		//Putting all the elements together for homeBoxOne (top part of the screen)
 		BorderPane homeBoxOne = new BorderPane(homeBoxOneCenter);
 		homeBoxOne.setPrefHeight(150);
 		homeBoxOne.setTop(homeBoxOneTop);
 
-		//middle of homeboxone and two
+		//Between homeBoxOne and Two (center of screen)
 		TextArea descriptionText = new TextArea(currentForecast.detailedForecast);
 		descriptionText.setWrapText(true);
 		descriptionText.setFont(Font.font("Verdana", FontWeight.MEDIUM,12));
@@ -156,37 +156,32 @@ public class HomeScreen extends SceneBuilder{
 		descriptionText.setEditable(false);
 		descriptionText.setPrefSize(300,70);
 
-		//---elements for homeBoxTwo (lower portion of screen)
-		//The bottom half of the screen is split into a left and right component
+		//Elements for homeBoxTwo (lower part of screen)
+		//homeBoxTwo is split into a left and right component
+		ScrollPane hourlyForecastScroll = getHourlyScroll(); //ScrollPane to display the weather for the next 24 hours
 
-		ScrollPane hourlyForecastScroll = getHourlyScroll();
-
-		//---elements in homeBoxTwoLeft (left side of homeBoxTwo)
-		Label todayWeatherText = new Label("      Today's Weather");
+		Label todayWeatherText = new Label("      Today's Weather"); //spacing to center the label
 		todayWeatherText.setFont(Font.font("Verdana",FontWeight.BOLD, 16));
 		todayWeatherText.setTextFill(Color.rgb(255,255,255));
 		todayWeatherText.setPrefSize(220,18);
 		todayWeatherText.setEffect(dropShadow);
 
-		//--putting all the elements together for the left part of the bottom of the screen
-		VBox homeBoxTwoLeft = new VBox(todayWeatherText, hourlyForecastScroll);
-
-		//---elements in homeBoxTwoRight (right side of homeBoxTwo)
-		TextArea alertsText = getAlertsText();
-
-		Image forecastImage = new Image(currentForecast.icon);
+		Image forecastImage = new Image(currentForecast.icon); //this causes some lag when the image is loading from the url
 		ImageView forecastView = new ImageView(forecastImage);
 		forecastView.setFitHeight(100);
 		forecastView.setFitWidth(100);
 		forecastView.setEffect(dropShadow);
 
+		TextArea alertsText = getAlertsText(); //Displays expanded information when clicked
+
+		//Putting all elements together for homeBoxTwo (bottom part of screen)
+		VBox homeBoxTwoLeft = new VBox(todayWeatherText, hourlyForecastScroll);
 		VBox homeBoxTwoRight = new VBox(10, forecastView, alertsText);
 
-		//--putting all elements together for homeBoxTwo (bottom portion of screen)
 		HBox homeBoxTwo = new HBox(10, homeBoxTwoLeft, homeBoxTwoRight);
 		homeBoxTwo.setAlignment(Pos.CENTER);
 
-		//--putting all elements together in BorderPane root (whole screen)
+		//Putting all elements together in root (whole screen)
 		VBox centerRoot = new VBox(10, homeBoxOne, descriptionText);
 
 		BorderPane root = new BorderPane(centerRoot);
@@ -198,8 +193,12 @@ public class HomeScreen extends SceneBuilder{
 		return root;
 	}
 
+	/*
+		Creates a TextArea node that displays the active alerts for the area
+		When clicked, creates a dialog stage with the detailed alert and instructions
+	 */
 	private static TextArea getAlertsText(){
-		TextArea alertsText = new TextArea("Alerts: None");
+		TextArea alertsText = new TextArea("Alerts: None currently.");
 		alertsText.setWrapText(true);
 		alertsText.setFont(Font.font("Verdana", FontWeight.MEDIUM,12));
 		alertsText.setEffect(dropShadow);
@@ -208,53 +207,22 @@ public class HomeScreen extends SceneBuilder{
 		alertsText.setId("alertsText");
 
 		if(!currAlerts.isEmpty()){
-			Alert currAlert = currAlerts.get(0);
+			Alert currAlert = currAlerts.get(0); //currAlerts can have multiple active alerts, this only displays the first one
 			alertsText.setText("Alerts: " + currAlert.headline);
 
-			TextArea headlineText = new TextArea(currAlert.headline);
-			headlineText.setPrefSize(400,100);
-			headlineText.setEditable(false);
-			headlineText.setId("headlineText");
-
-			TextArea descriptionText = new TextArea(currAlert.description);
-			descriptionText.setPrefSize(400,300);
-			descriptionText.setEditable(false);
-
-			TextArea instructionText = new TextArea("Instructions: " + currAlert.instruction);
-			instructionText.setPrefSize(400,150);
-			instructionText.setEditable(false);
-
-			VBox alertsBox = new VBox(headlineText, descriptionText, instructionText);
-
-			Scene nextScene = new Scene(alertsBox);
-			String stylesheet = "/style.css";
-			switch(theme){
-				case "Matcha":
-					stylesheet = "/css/alerts/alerts_matcha.css";
-					break;
-				case "Cocoa":
-					stylesheet = "/css/alerts/alerts_cocoa.css";
-					break;
-				case "Milk":
-					stylesheet = "/css/alerts/alerts_milk.css";
-					break;
-				case "Ube":
-					stylesheet = "/css/alerts/alerts_ube.css";
-					break;
-			}
-			nextScene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
-
-			alertsDialog = new Stage();
-			alertsDialog.setScene(nextScene);
-			alertsDialog.setTitle("Active Alert");
-			alertsDialog.setResizable(false);
-			alertsDialog.initOwner(stage);
-
 			alertsText.setOnMouseClicked(e-> {
-				if(alertsDialog.isShowing()) {
+				if(alertsDialog != null && alertsDialog.isShowing()) {
 					alertsDialog.close();
 				}
 				else{
+					Scene nextScene = getAlertsScene(currAlert); //getting the scene for the alerts dialog stage
+
+					alertsDialog = new Stage();
+					alertsDialog.setScene(nextScene);
+					alertsDialog.setTitle("Active Alert");
+					alertsDialog.setResizable(false);
+					alertsDialog.initOwner(stage);
+
 					alertsDialog.show();
 				}
 			});
@@ -263,7 +231,50 @@ public class HomeScreen extends SceneBuilder{
 		return alertsText;
 	}
 
-	//Creates dialog window to prompt user for location
+	//Creating the scene for the alerts dialog stage
+	private static Scene getAlertsScene(Alert currAlert){
+		TextArea headlineText = new TextArea(currAlert.headline);
+		headlineText.setPrefSize(400,100);
+		headlineText.setEditable(false);
+		headlineText.setId("headlineText");
+
+		//the alert description from the api comes with weirdly placed newlines and '*' characters which
+		//has to be reformatted before displaying.
+		String description = currAlert.description.replaceAll("\n", " ").replaceAll("\\*", "\n*");
+		TextArea descriptionText = new TextArea(description);
+		descriptionText.setPrefSize(400,300);
+		descriptionText.setEditable(false);
+
+		String instructions = "Instructions: " + currAlert.instruction.replaceAll("\n", " ").replaceAll("\\*", "\n*");
+		TextArea instructionText = new TextArea(instructions);
+		instructionText.setPrefSize(400,150);
+		instructionText.setEditable(false);
+
+		VBox alertsBox = new VBox(headlineText, descriptionText, instructionText);
+
+		Scene nextScene = new Scene(alertsBox);
+
+		String stylesheet = "/style.css";
+		switch(theme){
+			case "Matcha":
+				stylesheet = "/css/alerts/alerts_matcha.css";
+				break;
+			case "Cocoa":
+				stylesheet = "/css/alerts/alerts_cocoa.css";
+				break;
+			case "Milk":
+				stylesheet = "/css/alerts/alerts_milk.css";
+				break;
+			case "Ube":
+				stylesheet = "/css/alerts/alerts_ube.css";
+				break;
+		}
+		nextScene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
+
+		return nextScene;
+	}
+
+	//Creates dialog window for changing location
 	private static Button getLocationButton(){
 		Button locationButton = new Button(getLocation());
 		locationButton.setPrefSize(150,40);
@@ -274,10 +285,10 @@ public class HomeScreen extends SceneBuilder{
 				alertsDialog.close();
 			}
 
-			Stage locationDialog = new Stage();
-			locationStage = locationDialog;
-
 			Scene nextScene = LocationDetails.getScene();
+
+			Stage locationDialog = new Stage();
+			locationStage = locationDialog; //defining locationStage in the scope
 
 			locationDialog.setScene(nextScene);
 			locationDialog.setTitle("LocationDetails");
@@ -285,59 +296,59 @@ public class HomeScreen extends SceneBuilder{
 
 			locationDialog.initOwner(stage);
 			locationDialog.initModality(Modality.WINDOW_MODAL); //prevents user interaction with main stage until the dialog window has closed
-			locationDialog.showAndWait();
+			locationDialog.show();
 		});
 
 		return locationButton;
 	}
 
+	//Creates the crazy ScrollPane displaying the weather for the next 24 hours
 	private static ScrollPane getHourlyScroll(){
-		VBox hourlyForecastBox = new VBox();
-		ScrollPane hourlyForecastScroll = new ScrollPane(hourlyForecastBox); //This ScrollPane allows the user to scroll through the VBox
+		VBox hourlyForecastBox = new VBox(); //empty vbox to be filled with nodes
+
+		ScrollPane hourlyForecastScroll = new ScrollPane(hourlyForecastBox);
 		hourlyForecastScroll.setPrefSize(220, 300);
 		hourlyForecastScroll.setId("shelfScroll");
 
-		ArrayList<HBox> moreInfoBoxes = new ArrayList<>();
-		ArrayList<BorderPane> hourBoxes = new ArrayList<>();
+		ArrayList<BorderPane> hourBoxes = new ArrayList<>(); //BorderPanes which display the hour, temperature, and rain chance
+		ArrayList<HBox> expandedInfoBoxes = new ArrayList<>(); //HBoxes which display the wind speed and humidity
 
-		for(int i = 0; i <= 24; i++){
+		for (int i = 0; i <= 24; i++) {
 			HourlyPeriod currentPeriod = hourlyPeriods.get(i);
 
-			Date currentHour = currentPeriod.startTime;
-			SimpleDateFormat localDateFormat;
-			if(timeFormat.equals("24hr")){
+			SimpleDateFormat localDateFormat; //formatter used to extract the hour from the date object
+			if (timeFormat.equals("24hr")) {
 				localDateFormat = new SimpleDateFormat("HH:mm");
 			}
 			else{
 				localDateFormat = new SimpleDateFormat("hh a");
 			}
-			String hourTime = localDateFormat.format(currentHour);
-
-			Label time = new Label(hourTime);
-			time.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));
-			if(currentPeriod.isDaytime){
-				time.setTextFill(Color.web("#FFFFFF"));
-			}
-			else{
-				time.setTextFill(Color.web("#B3B3B3"));
-			}
-			time.setEffect(dropShadow);
+			String hour = localDateFormat.format(currentPeriod.startTime);
 
 			int temperature = currentPeriod.temperature;
-			if(temperatureUnit.equals("Celsius")){
+			if (temperatureUnit.equals("Celsius")) {
 				temperature = convertFahrenheitToCelsius(temperature);
+			}
+
+			Label time = new Label(hour);
+			time.setFont(Font.font("Verdana", FontWeight.EXTRA_BOLD, 15));
+			time.setEffect(dropShadow);
+			time.setTextFill(Color.web("#FFFFFF"));
+			if (!currentPeriod.isDaytime) {
+				time.setTextFill(Color.web("#B3B3B3"));
 			}
 
 			Label temp = new Label(temperature + "°");
 			temp.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-			temp.setTextFill(Color.rgb(255,255,255));
 			temp.setEffect(dropShadow);
+			temp.setTextFill(Color.rgb(255,255,255));
 
 			Label rainChance = new Label(currentPeriod.probabilityOfPrecipitation.value + "%");
 			rainChance.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-			rainChance.setTextFill(Color.web("#7393B3"));
 			rainChance.setEffect(dropShadow);
+			rainChance.setTextFill(Color.web("#7393B3"));
 
+			//putting the elements together for the top part of the box
 			HBox statusBox = new HBox(30, time, temp,rainChance);
 			statusBox.setAlignment(Pos.CENTER);
 
@@ -349,21 +360,23 @@ public class HomeScreen extends SceneBuilder{
 			humidity.setFont(Font.font("Verdana", 9));
 			humidity.setTextFill(Color.rgb(255,255,255));
 
+			//putting the elements together for the bottom part of the box
 			HBox expandedStatusBox = new HBox(20, wind, humidity);
 			expandedStatusBox.setAlignment(Pos.CENTER);
-			expandedStatusBox.setVisible(false);
-			moreInfoBoxes.add(expandedStatusBox);
+			expandedStatusBox.setVisible(false); //hides this so it will be shown when the user clicks the box
+			expandedInfoBoxes.add(expandedStatusBox);
 
+			//putting the top and bottom together into one box
 			BorderPane currHourBox = new BorderPane();
 			currHourBox.setCenter(statusBox);
 			currHourBox.setBottom(expandedStatusBox);
 			currHourBox.setPadding(new Insets(6));
 			currHourBox.setPrefSize(204,50);
 
-			if(i == 0){
+			if(i == 0){ //first box is the top of the shelf
 				currHourBox.setId("shelfTop");
 			}
-			else if(i == 24){
+			else if(i == 24){ //last box is te bottom of the shelf
 				currHourBox.setId("shelfBottom");
 			}
 			else{
@@ -373,22 +386,22 @@ public class HomeScreen extends SceneBuilder{
 			hourBoxes.add(currHourBox);
 			hourlyForecastBox.getChildren().add(currHourBox);
 
-			prevHourBox = currHourBox;
+			prevHourBox = currHourBox; //this just ensures that prevHourBox is not null and exists in the hourBoxes array
 			currHourBox.setOnMouseClicked(e -> {
-				int index = hourBoxes.indexOf(currHourBox);
-				int prevIndex = hourBoxes.indexOf(prevHourBox);
+				int index = hourBoxes.indexOf(currHourBox); //index of the box the user clicked on
+				int prevIndex = hourBoxes.indexOf(prevHourBox); //index of the previous box the user clicked on
 
-				if(!moreInfoBoxes.get(index).isVisible()){
-					moreInfoBoxes.get(index).setVisible(true);
+				if(!expandedInfoBoxes.get(index).isVisible()){ //checks if the wind speed and humidity are already displayed
+					expandedInfoBoxes.get(index).setVisible(true);
 
-					if(currHourBox != prevHourBox){
-						moreInfoBoxes.get(prevIndex).setVisible(false);
+					if(currHourBox != prevHourBox){ //hides the wind/humidity of the previous box the user clicked
+						expandedInfoBoxes.get(prevIndex).setVisible(false);
 					}
 
 					prevHourBox = currHourBox;
 				}
-				else{
-					moreInfoBoxes.get(index).setVisible(false);
+				else{ //hides the wind speed and humidity if they are already shown
+					expandedInfoBoxes.get(index).setVisible(false);
 				}
 			});
 		}
