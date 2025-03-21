@@ -1,9 +1,19 @@
+#navigationButton {
+    -fx-background-color: transparent;
+    -fx-border-width: 1;
+    -fx-border-color: black;
+}
+
+#navigationButton:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.25);
+}
+
 #settingsBox{
     -fx-background-color: #d5bdaf;
 }
 
 #comboBox {
-    -fx-background-color: #ddb892;
+    -fx-background-color: #a58e84;
     -fx-opacity: 0.95;
 }
 

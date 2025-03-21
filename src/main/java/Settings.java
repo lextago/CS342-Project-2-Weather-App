@@ -5,6 +5,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -20,6 +22,10 @@ public class Settings extends SceneBuilder{
 		BorderPane root = getRoot();
 		BorderPane rootPane = new BorderPane(root);
 		rootPane.setBottom(NavigationBar.getNavigationBar());
+		rootPane.setPrefSize(360, 640);
+
+		Pane pane = new Pane();
+		pane.getChildren().add(rootPane);
 
 		String stylesheet = "style.css";
 		switch(theme){
@@ -37,7 +43,14 @@ public class Settings extends SceneBuilder{
 				break;
 		}
 
-		Scene scene = new Scene(rootPane, 360, 640);
+		Image dog = new Image("/images/fox_peeking.jpg", 135, 90, false, true);
+		ImageView dogView = new ImageView(dog);
+
+		pane.getChildren().add(dogView);
+		dogView.setLayoutX(250);
+		dogView.setLayoutY(520);
+
+		Scene scene = new Scene(pane, 360, 640);
 		scene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
 
 		return scene;
@@ -118,20 +131,24 @@ public class Settings extends SceneBuilder{
 
 	//creating and designing each settings box
 	private static BorderPane createSettingsBox(Label text, ComboBox dropdown){
-		text.setFont(new Font("Inter", 20));
+		text.setFont(new Font("Inter", 25));
 		text.setTextFill(Color.WHITE);
 		text.setEffect(dropShadow);
 
-		dropdown.setPrefWidth(100);
+		dropdown.setPrefWidth(110);
+		dropdown.setPrefHeight(40);
+		dropdown.setEffect(dropShadow);
 		dropdown.setId("comboBox");
 
 		BorderPane settingPanel = new BorderPane();
+		settingPanel.setEffect(dropShadow);
 		settingPanel.setLeft(text);
 		settingPanel.setRight(dropdown);
 
 		settingPanel.setPadding(new Insets(5));
 		settingPanel.setBorder(Border.stroke(Color.BLACK));
 		settingPanel.setMaxWidth(340);
+		settingPanel.setPrefHeight(45);
 		settingPanel.setOpacity(0.9);
 		settingPanel.setId("settingsBox");
 		return settingPanel;

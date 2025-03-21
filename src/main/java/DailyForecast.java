@@ -76,6 +76,7 @@ public class DailyForecast extends SceneBuilder{
 	public static BorderPane getRoot(){
 		ComboBox<String> numDaysChoices = new ComboBox<>(); // Dropdown of all day choices
 		numDaysChoices.setPromptText("Select Days");
+		numDaysChoices.setEffect(dropShadow);
 		numDaysChoices.setId("comboBox");
 		numDaysChoices.getItems().addAll("3 Day", "5 Day", "7 Day");
 		numDaysChoices.setPrefWidth(200);
