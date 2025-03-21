@@ -18,12 +18,12 @@ public class MyWeatherAPI extends WeatherAPI {
 
 	//Retrieves coordinates from geocoding a location (basically converting location to coordinates) using Mapbox
 	public static ArrayList<Pair<String, Double[]>> getCoords(String city, String state){
-		city = city.replace(" ", "&");
+		city = city.replace(" ", "&"); //formatting the strings properly to work with the api
 		state = state.replace(" ", "&");
 		String requestString = "https://api.mapbox.com/search/geocode/v6/forward?"+
 		"place=" + city + "&" + "region=" + state + "&country=United&States&access_token=" + System.getenv("MAPBOX_API_KEY");
 
-		System.out.println("coords: " + requestString);
+		System.out.println("Coords : " + requestString); //for debugging purposes
 
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(requestString))
@@ -133,9 +133,12 @@ public class MyWeatherAPI extends WeatherAPI {
 		return gridPair;
 	}
 
+	//Gets the lowest and highest temperatures for the next week
+	//Returns a list of days and arrays of temperatures
+	//One thing to note: the temperatures retrieved are in Celsius
 	public static ArrayList<Pair<String, double[]>> getMinAndMaxTemperatures(String region, int gridx, int gridy){
 		String requestString = "https://api.weather.gov/gridpoints/" + region + "/" + gridx + "," + gridy;
-		System.out.println("min max: " + requestString);
+		System.out.println("Min/Max : " + requestString);
 
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(requestString))
@@ -177,56 +180,11 @@ public class MyWeatherAPI extends WeatherAPI {
 		return minAndMaxTemps;
 	}
 
-	public static ArrayList<Pair<String, Integer>> getProbabilityOfPrecipitation(String region, int gridx, int gridy){
-		String requestString = "https://api.weather.gov/gridpoints/" + region + "/" + gridx + "," + gridy;
-
-		HttpRequest request = HttpRequest.newBuilder()
-				.uri(URI.create(requestString))
-				//.method("GET", HttpRequest.BodyPublishers.noBody())
-				.build();
-		HttpResponse<String> response = null;
-		try {
-			response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		ArrayList<Pair<String, Integer>> precipitationProbabilities = new ArrayList<>();
-		try{
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode root = mapper.readTree(response.body());
-
-			Iterator<JsonNode> iterator = root.at("/properties/probabilityOfPrecipitation/values").elements();
-
-			int i = 0;
-			while(iterator.hasNext()){
-				JsonNode dateNode = root.at("/properties/probabilityOfPrecipitation/values/" + i + "/validTime");
-				JsonNode precipitationNode = root.at("/properties/probabilityOfPrecipitation/values/" + i + "/value");
-
-				String dateString = dateNode.asText();
-				int rainChance = precipitationNode.asInt();
-
-				Pair<String, Integer> probabilityOfPrecipitation = new Pair<>(dateString, rainChance);
-				precipitationProbabilities.add(probabilityOfPrecipitation);
-
-				iterator.next();
-				i++;
-			}
-
-		}catch (JsonProcessingException e){
-			e.printStackTrace();
-		}
-
-		if(precipitationProbabilities.isEmpty()){
-			System.err.println("Failed to parse properties JSon");
-		}
-
-		return precipitationProbabilities;
-	}
-
+	//Gets a list of active alerts in the area
+	//Alert objects have a headline, description, and instruction
 	public static ArrayList<Alert> getActiveAlerts(double latitude, double longitude){
 		String requestString = "https://api.weather.gov/alerts/active?point=" + latitude + "," + longitude;
-		System.out.println("alerts " + requestString);
+		System.out.println("Alerts : " + requestString);
 		HttpRequest request = HttpRequest.newBuilder()
 				.uri(URI.create(requestString))
 				//.method("GET", HttpRequest.BodyPublishers.noBody())
