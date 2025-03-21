@@ -49,11 +49,11 @@ public class HomeScreen extends SceneBuilder{
 		plantView.setLayoutY(223);
 
 		pane.getChildren().add(catView);
-		catView.setLayoutX(260);
+		catView.setLayoutX(270);
 		catView.setLayoutY(125);
 
 		pane.getChildren().add(pinguView);
-		pinguView.setLayoutX(-23);
+		pinguView.setLayoutX(-28);
 		pinguView.setLayoutY(520);
 
 		pane.getChildren().add(matchaView);

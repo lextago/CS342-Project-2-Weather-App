@@ -22,10 +22,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class DailyForecast extends SceneBuilder{
-	private static ArrayList<HourlyPeriod> hourlyPeriods;
-	private static ArrayList<Period> periods;
-	private static ArrayList<Pair<String, double[]>> minAndMaxTemps;
-
 	private static int hourlyIndex;
 	private static ScrollPane hourlyScrollPane;
 	private static VBox rootVBox;
@@ -78,10 +74,6 @@ public class DailyForecast extends SceneBuilder{
 	}
 
 	public static BorderPane getRoot(){
-		minAndMaxTemps = MyWeatherAPI.getMinAndMaxTemperatures(region, gridX, gridY);
-		periods = WeatherAPI.getForecast(region, gridX, gridY);
-		hourlyPeriods = MyWeatherAPI.getHourlyForecast(region, gridX, gridY);
-
 		rootVBox = new VBox();
 
 		ComboBox<String> numDaysChoices = new ComboBox<>(); // Dropdown of all day choices
@@ -318,7 +310,7 @@ public class DailyForecast extends SceneBuilder{
 			hour.setTextFill(Color.WHITE);
 
 			if(!currHour.isDaytime){
-				hour.setTextFill(Color.web("#C0C0C0"));
+				hour.setTextFill(Color.BLACK);
 			}
 
 			int tempValue = currHour.temperature;

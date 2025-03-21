@@ -9,26 +9,31 @@ import weather.WeatherAPI;
 
 import java.util.ArrayList;
 
+/*
+	The SceneBuilder class is used to share variables between each screen of the app.
+	SceneBuilder has 5 subclasses: HomeScreen, DailyForecast, LocationDetails, Settings, WeeklyTrends
+ */
 public class SceneBuilder {
-	public static Stage stage;
-	public static Stage locationStage;
+	public static Stage stage; //The main stage of the app
+	public static Stage locationStage; //A dialog stage used to create the LocationDetails screen
 
-	public static String location;
+	public static String location; //Location of the app (e.g. "Chicago, IL")
 	public static double latitude;
 	public static double longitude;
 	public static String region;
 	public static int gridX;
 	public static int gridY;
 	public static String theme;
-	public static BackgroundImage backgroundImage;
-	public static String temperatureUnit;
-	public static String timeFormat;
+	public static BackgroundImage backgroundImage; //Background image for each main screen of the app
+	public static String temperatureUnit; //Fahrenheit or Celsius
+	public static String timeFormat; //12hr or 24hr
 
-	public static ArrayList<HourlyPeriod> hourlyPeriods;
-	public static ArrayList<Period> periods;
-	public static ArrayList<Pair<String, double[]>> minAndMaxTemps;
-	public static ArrayList<Alert> currAlerts;
+	public static ArrayList<HourlyPeriod> hourlyPeriods; //Hourly periods from the API's forecastHourly property
+	public static ArrayList<Period> periods; //12 hour periods from the API's forecast property
+	public static ArrayList<Pair<String, double[]>> minAndMaxTemps; //Lowest and highest temperatures of the week
+	public static ArrayList<Alert> currAlerts; //Alerts from the API's alerts property
 
+	//By default, all the data are for Chicago
 	public SceneBuilder(){
 		location = "Chicago, Illinois";
 		latitude = 41.882;
@@ -39,6 +44,7 @@ public class SceneBuilder {
 		theme = "Matcha";
 		temperatureUnit = "Fahrenheit";
 		timeFormat = "12hr";
+
 		setBackgroundImage("/images/backgrounds/plant_wallpaper.jpg");
 		updateData();
 	}
@@ -58,21 +64,24 @@ public class SceneBuilder {
 		SceneBuilder.location = location;
 	}
 
-	public static String getLocation(){
-		return location;
-	}
-
 	public static void updateData(){
+		System.out.println("Updating data, please be patient...");
 		hourlyPeriods = MyWeatherAPI.getHourlyForecast(region, gridX, gridY);
 		periods = WeatherAPI.getForecast(region, gridX, gridY);
 		minAndMaxTemps = MyWeatherAPI.getMinAndMaxTemperatures(region, gridX, gridY);
 		currAlerts = MyWeatherAPI.getActiveAlerts(latitude, longitude);
+		System.out.println("Done.\n");
 	}
 
 	public static void setBackgroundImage(String url){
 		Image image = new Image(url, 360, 640, false, true);
 		backgroundImage = new BackgroundImage(image, BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, null, null);
 	}
+
+	public static String getLocation(){
+		return location;
+	}
+
 
 	public static void setTheme(String theme){
 		SceneBuilder.theme = theme;
@@ -89,9 +98,4 @@ public class SceneBuilder {
 	public static int convertCelsiusToFahrenheit(int celsius){
 		return (celsius * 9 / 5) + 32;
 	}
-
-	public Stage getStage() {
-		return stage;
-	}
-
 }
