@@ -26,41 +26,54 @@ public class WeeklyTrends extends SceneBuilder {
 		rootPane.setBottom(NavigationBar.getNavigationBar());
 
 		Scene scene = new Scene(rootPane, 360, 640);
-		scene.getStylesheets().add(SceneBuilder.class.getResource("/css/trends.css").toExternalForm());
+		String stylesheet = "style.css";
 
+		// Allows the changing of themes based on settings
+		switch(theme){
+			case "Matcha":
+				stylesheet = "/css/trends/trends_matcha.css";
+				break;
+			case "Cocoa":
+				stylesheet = "/css/trends/trends_cocoa.css";
+				break;
+			case "Milk":
+				stylesheet = "/css/trends/trends_milk.css";
+				break;
+			case "Ube":
+				stylesheet = "/css/trends/trends_ube.css";
+				break;
+		}
+		scene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
 		return scene;
 	}
 
 	public static BorderPane getRoot(){
-		// Use WeatherAPI in weather folder
-		// https://api.weather.gov/gridpoints/LOT/77,70/forecast
+		// Creates a "Weekly Trends" label for the title
 		Label weeklyTrends = new Label("Weekly Trends");
 		weeklyTrends.setTextFill(Color.WHITE);
 		weeklyTrends.setFont(Font.font("Inter", FontWeight.BOLD, 40));
 		weeklyTrends.setPadding(new Insets(20,20,20,20));
 		weeklyTrends.setAlignment(Pos.CENTER);
 		weeklyTrends.setEffect(HomeScreen.dropShadow);
-		BorderPane weeklyTrendsPane = new BorderPane(weeklyTrends);
 
-		ComboBox<String> numDaysChoices = new ComboBox<>(); // Dropdown of all day choices
-		numDaysChoices.setId("daysComboBox");
+		// Creates a dropdown with the choice of 3, 5, or 7 days of weekly trends to be displayed
+		ComboBox<String> numDaysChoices = new ComboBox<>();
+		numDaysChoices.setId("comboBox");
 		numDaysChoices.setPromptText("Select Days");
-		numDaysChoices.setId("daysComboBox");
 		numDaysChoices.getItems().addAll("3 Day", "5 Day", "7 Day");
 		numDaysChoices.setEffect(HomeScreen.dropShadow);
 		numDaysChoices.setPrefWidth(230);
 
-		HBox numDaysAndTempBox = new HBox(numDaysChoices);
-		numDaysAndTempBox.setAlignment(Pos.CENTER);
+		ObservableList<String> days = FXCollections.observableArrayList(); // Stores days
 
-		ObservableList<String> days = FXCollections.observableArrayList();
-
+		// Ensures that xAxis looks good when displayed with low and high temperature data
 		CategoryAxis xAxis = new CategoryAxis();
 		xAxis.setEffect(HomeScreen.dropShadow);
 		xAxis.setTickLabelFont(Font.font("Verdana", 15));
 		xAxis.setStyle("-fx-text-fill: White");
 		xAxis.setTickLabelFill(Color.WHITE);
 
+		// Ensures that yAxis looks good when displayed with low and high temperature data
 		NumberAxis yAxis = new NumberAxis();
 		yAxis.setEffect(HomeScreen.dropShadow);
 		yAxis.setTickLabelFont(Font.font("Verdana", 15));
@@ -69,72 +82,46 @@ public class WeeklyTrends extends SceneBuilder {
 		yAxis.setTickUnit(10);
 		yAxis.setMinorTickCount(0);
 
+		// Makes a lineChart with xAxis and yAxis
 		final LineChart<String,Number> lineChart =
 				new LineChart<String, Number>(xAxis,yAxis);
-
 		lineChart.setEffect(HomeScreen.dropShadow);
 		lineChart.setStyle("-fx-prompt-text-fill: White");
 
 		ArrayList<Pair<String, double[]>> minAndMax = MyWeatherAPI.getMinAndMaxTemperatures(region, gridX, gridY);
-
 		HBox allWeekDays = new HBox();
+		allWeekDays.setAlignment(Pos.CENTER);
 
+		// Displays number of days desired everytime a dropdown selection is clicked
 		numDaysChoices.setOnAction(e -> {;
-
+            // Gets number of days desired
 			String dayChoice = numDaysChoices.getValue();
 			int dayChoiceNumber = Integer.parseInt(dayChoice.split("")[0]);
-			allWeekDays.getChildren().clear();
 
+			allWeekDays.getChildren().clear();
 			lineChart.getData().clear();
 			days.clear();
 
-			XYChart.Series xyValues = new XYChart.Series();
-			xyValues.setName("Low");
+			// Creating the lines for low and high temperature
+			XYChart.Series lowTempLine = new XYChart.Series();
+			lowTempLine.setName("Low");
+			XYChart.Series highTempLine = new XYChart.Series();
+			highTempLine.setName("High");
 
-			XYChart.Series xyValuesTwo = new XYChart.Series();
-			xyValuesTwo.setName("High");
-
+			// Adds low temperature and high temperature for number of days desired
 			for (int i = 0; i < dayChoiceNumber; i++) {
+				// Gets current day abbreviation and adds it to xAxis
 				Pair<String, double[]> pair = minAndMax.get(i);
 				String dateString = pair.getKey();
-
 				String dateTimeString = dateString.split("/")[0]; // Makes the date format ISO
-
-				// Formats properly to get date
 				DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 				OffsetDateTime dateTime = OffsetDateTime.parse(dateTimeString, formatter);
-
 				DayOfWeek dayOfWeek = dateTime.getDayOfWeek(); // Gets the day of the week
 				String dayOfWeekAbbreviation = dayOfWeek.toString().substring(0,3);
-
-				/*String dayOfWeekTwoLetter = dayOfWeek.toString().substring(0,2);
-				String dayOfWeekOneLetter = dayOfWeek.toString().substring(0,1);
-				if (dayOfWeekTwoLetter.equals("TH") || dayOfWeekTwoLetter.equals("SU")) {
-					Label weekDayLabel = new Label(dayOfWeekTwoLetter);
-					weekDayLabel.setFont(new Font("Inter", 40));
-					BorderPane weekDayPane = new BorderPane();
-					weekDayPane.setEffect(HomeScreen.dropShadow);
-					weekDayPane.setCenter(weekDayLabel);
-					weekDayPane.setPadding(new Insets(5));
-					weekDayPane.setStyle("-fx-background-color: #FFFFFF;");
-					weekDayPane.setBorder(Border.stroke(Color.BLACK));
-					allWeekDays.getChildren().add(weekDayPane);
-				} else{
-					Label weekDayLabel = new Label(dayOfWeekOneLetter);
-					weekDayLabel.setFont(new Font("Inter", 40));
-					BorderPane weekDayPane = new BorderPane();
-					weekDayPane.setEffect(HomeScreen.dropShadow);
-					weekDayPane.setCenter(weekDayLabel);
-					weekDayPane.setPadding(new Insets(5));
-					weekDayPane.setStyle("-fx-background-color: #FFFFFF;");
-					weekDayPane.setBorder(Border.stroke(Color.BLACK));
-					allWeekDays.getChildren().add(weekDayPane);
-				}*/
-
-
 				days.add(dayOfWeekAbbreviation);
 				xAxis.setCategories(days);
-				int min = (int) minAndMax.get(i).getValue()[0];
+
+				int min = (int) minAndMax.get(i).getValue()[0]; // Low temperature
 				int max = (int) minAndMax.get(i).getValue()[1];
 
 				if (temperatureUnit.equals("Fahrenheit")) {
@@ -142,22 +129,19 @@ public class WeeklyTrends extends SceneBuilder {
 					max = (int) (max * 1.8 + 32);
 				}
 
-				xyValues.getData().add(new XYChart.Data(dayOfWeekAbbreviation, min));
-				xyValuesTwo.getData().add(new XYChart.Data(dayOfWeekAbbreviation, max));
+				lowTempLine.getData().add(new XYChart.Data(dayOfWeekAbbreviation, min)); // Adds low temperature to the low temperature line
+				highTempLine.getData().add(new XYChart.Data(dayOfWeekAbbreviation, max));
 			}
-
-			lineChart.getData().addAll(xyValues, xyValuesTwo);
+			// lineChart gets all the lines
+			lineChart.getData().addAll(lowTempLine, highTempLine);
 			lineChart.setId("firstChart");
 		});
 
+		// Organizes everything to be displayed properly
 		HBox chartBox = new HBox(lineChart);
-
-		allWeekDays.setAlignment(Pos.CENTER);
-
-		VBox dropdownAndTitle = new VBox(4, weeklyTrendsPane, numDaysAndTempBox, chartBox);
+		VBox dropdownAndTitle = new VBox(4, weeklyTrends, numDaysChoices, chartBox);
 		dropdownAndTitle.setAlignment(Pos.CENTER);
 		VBox root = new VBox(30, dropdownAndTitle);
-
 		root.setBackground(new Background(backgroundImage));
 
 		return new BorderPane(root);

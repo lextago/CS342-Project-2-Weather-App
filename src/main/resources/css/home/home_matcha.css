@@ -30,6 +30,26 @@
     -fx-background-color: #C19A6B;
 }
 
+#shelfScroll .scroll-bar:horizontal{
+    -fx-background-color: transparent;
+}
+
+#shelfScroll .scroll-bar:horizontal .thumb{
+    -fx-background-color: transparent;
+}
+
+#shelfScroll .scroll-pane > .corner {
+    -fx-background-color: transparent ;
+}
+
+#shelfScroll .scroll-bar:horizontal .increment-button .increment-arrow{
+    -fx-background-color: transparent;
+}
+
+#shelfScroll .scroll-bar:horizontal .decrement-button .decrement-arrow{
+    -fx-background-color: transparent;
+}
+
 #homeBox{
     -fx-opacity: 0.8;
     -fx-text-fill: white;
