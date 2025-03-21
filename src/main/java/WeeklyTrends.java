@@ -38,11 +38,8 @@ public class WeeklyTrends extends SceneBuilder {
 		dogView.setLayoutX(160);
 		dogView.setLayoutY(526);
 
-
-		Scene scene = new Scene(pane, 360, 640);
-		scene.getStylesheets().add(SceneBuilder.class.getResource("/css/trends.css").toExternalForm());
-
 		// Allows the changing of themes based on settings
+		String stylesheet = "/css/style.css";
 		switch(theme){
 			case "Matcha":
 				stylesheet = "/css/trends/trends_matcha.css";
@@ -57,6 +54,8 @@ public class WeeklyTrends extends SceneBuilder {
 				stylesheet = "/css/trends/trends_ube.css";
 				break;
 		}
+
+		Scene scene = new Scene(pane, 360, 640);
 		scene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
 		return scene;
 	}
@@ -123,7 +122,7 @@ public class WeeklyTrends extends SceneBuilder {
 			highTempLine.setName("High");
 
 			// Adds low temperature and high temperature for number of days desired
-			for (int i = 0; i < dayChoiceNumber; i++) {
+			for (int i = 1; i < dayChoiceNumber + 1; i++) {
 				// Gets current day abbreviation and adds it to xAxis
 				Pair<String, double[]> pair = minAndMax.get(i);
 				String dateString = pair.getKey();
