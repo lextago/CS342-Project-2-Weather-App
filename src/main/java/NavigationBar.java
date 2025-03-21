@@ -37,8 +37,7 @@ public class NavigationBar {
 	}
 
 	/*	Event handler for each button in the navigation bar.
-	Adds the navigation bar to the bottom of the BorderPane, uses that BorderPane as the root
-	for the next scene, then changes the stage's current scene to the next.
+		Changes the stage's scene and title
 	*/
 	private static void navigationBarHandler(ActionEvent event, Scene nextScene, String title){
 		//closing any open dialog stages
