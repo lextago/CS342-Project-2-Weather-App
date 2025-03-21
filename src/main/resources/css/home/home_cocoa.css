@@ -63,6 +63,11 @@
     -fx-background-color: #bc8a5f;
 }
 
+#pinguView:hover{
+    -fx-opacity: 0.5;
+}
+
+
 .text-area{
     -fx-opacity: 0.8;
     -fx-text-fill: white;

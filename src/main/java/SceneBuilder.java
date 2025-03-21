@@ -16,6 +16,8 @@ import java.util.ArrayList;
 public class SceneBuilder {
 	public static Stage stage; //The main stage of the app
 	public static Stage locationStage; //A dialog stage used to create the LocationDetails screen
+	public static Stage alertsStage; //Dialog stage used to display alerts in the area
+	public static Stage hourlyStage; //Dialog stage that displays the 24-hour forecast for the day
 
 	public static String location; //Location of the app (e.g. "Chicago, IL")
 	public static double latitude;

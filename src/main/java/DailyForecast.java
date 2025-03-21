@@ -27,8 +27,6 @@ public class DailyForecast extends SceneBuilder{
 	private static VBox rootVBox;
 	private static DropShadow dropShadow = new DropShadow();
 
-	private static Stage hourlyDialog; //Dialog stage that displays the 24-hour forecast for the day
-
 	public static Scene getScene(){
 		BorderPane root = getRoot();
 		BorderPane rootPane = new BorderPane(root);
@@ -38,12 +36,13 @@ public class DailyForecast extends SceneBuilder{
 		Pane pane = new Pane();
 		pane.getChildren().add(rootPane);
 
-		Image cat = new Image("/images/cat_peeking.png", 90, 90, false, true);
+		Image cat = new Image("/images/cat_peeking.png", 110, 110, false, true);
 		ImageView catView = new ImageView(cat);
+		catView.setId("catView");
 
 		pane.getChildren().add(catView);
-		catView.setLayoutX(100);
-		catView.setLayoutY(526);
+		catView.setLayoutX(85);
+		catView.setLayoutY(510);
 
 		Scene scene = new Scene(pane, 360, 640);
 		stylesheet = "style.css";
@@ -65,8 +64,8 @@ public class DailyForecast extends SceneBuilder{
 
 		//makes sure to close the hourlyDialog stage when the main stage is closed
 		stage.setOnCloseRequest(e -> {
-			if(hourlyDialog != null && hourlyDialog.isShowing()){
-				hourlyDialog.close();
+			if(hourlyStage != null && hourlyStage.isShowing()){
+				hourlyStage.close();
 			}
 		});
 
@@ -193,25 +192,26 @@ public class DailyForecast extends SceneBuilder{
 
 			//displays the hourly forecast for the day the user clicks
 			dayPaneTop.setOnMouseClicked(e -> {
-				if(hourlyDialog != null && hourlyDialog.isShowing()){
-					hourlyDialog.close();
+				if(hourlyStage != null && hourlyStage.isShowing()){
+					hourlyStage.close();
 				}
 
 				int paneIndex = dayPanes.indexOf(dayPaneTop);
 
 				boolean singlePeriod = (periods.get(0).name.equals("Tonight") || periods.get(0).name.equals("Overnight"));
 
-				hourlyDialog = new Stage();
-				hourlyDialog.setTitle("Hourly Forecast for " + dayString + " " + month + "/" + monthDay);
 				BorderPane hourlyRoot = getHourlyForecastRoot(hourlyIndex, paneIndex, singlePeriod);
 				hourlyRoot.setBackground(new Background(backgroundImage));
 
 				Scene nextScene = new Scene(hourlyRoot, 340, 600);
 				nextScene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
+				hourlyStage = new Stage();
+				hourlyStage.setTitle("Hourly Forecast for " + dayString + " " + month + "/" + monthDay);
 
-				hourlyDialog.setResizable(false);
-				hourlyDialog.setScene(nextScene);
-				hourlyDialog.show();
+				hourlyStage.setResizable(false);
+				hourlyStage.getIcons().add(new Image("/images/cloudy.png"));
+				hourlyStage.setScene(nextScene);
+				hourlyStage.show();
 			});
 
 			//displaying the data for the current period
@@ -381,7 +381,7 @@ public class DailyForecast extends SceneBuilder{
 		scrollPane.setMaxHeight(500);
 
 		Button back = new Button("Back");
-		back.setOnAction(e -> hourlyDialog.close()); //back only closes the dialog stage
+		back.setOnAction(e -> hourlyStage.close()); //back only closes the dialog stage
 		back.setId("back");
 
 		HBox dayBox = new HBox(day);

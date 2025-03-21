@@ -20,11 +20,8 @@ public class NavigationBar {
 		Button homeButton, dailyButton, trendsButton, settingsButton;
 
 		homeButton = makeNavigationButton("/images/home_icon.png");
-
 		dailyButton = makeNavigationButton("/images/calendar_icon.png");
-
 		trendsButton = makeNavigationButton("/images/bar_chart_icon.png");
-
 		settingsButton = makeNavigationButton("/images/settings_icon.png");
 
 		homeButton.setOnAction(e -> navigationBarHandler(e, HomeScreen.getScene(), "Home Screen"));
@@ -44,6 +41,14 @@ public class NavigationBar {
 	for the next scene, then changes the stage's current scene to the next.
 	*/
 	private static void navigationBarHandler(ActionEvent event, Scene nextScene, String title){
+		//closing any open dialog stages
+		if(SceneBuilder.alertsStage != null && SceneBuilder.alertsStage.isShowing()){
+			SceneBuilder.alertsStage.hide();
+		}
+		if(SceneBuilder.hourlyStage != null && SceneBuilder.hourlyStage.isShowing()){
+			SceneBuilder.hourlyStage.hide();
+		}
+
 		mainStage.setScene(nextScene);
 		mainStage.setTitle(title);
 	}

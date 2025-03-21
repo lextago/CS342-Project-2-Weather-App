@@ -16,12 +16,10 @@ import weather.Period;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class HomeScreen extends SceneBuilder{
 	private static BorderPane prevHourBox; //static global variable used for lambda method which requires 'final' variables
 	static DropShadow dropShadow = new DropShadow();
-	static Stage alertsDialog; //Dialog stage used to display alerts in the area
 
 	public static Scene getScene(){
 		BorderPane root = getRoot();
@@ -42,6 +40,7 @@ public class HomeScreen extends SceneBuilder{
 
 		Image pingu = new Image("/images/pingu_orange.png", 80, 80, false, true);
 		ImageView pinguView = new ImageView(pingu);
+		pinguView.setId("pinguView");
 
 		Image matcha = new Image("/images/matcha.png", 100, 100, false, true);
 		ImageView matchaView = new ImageView(matcha);
@@ -55,7 +54,7 @@ public class HomeScreen extends SceneBuilder{
 		catView.setLayoutY(125);
 
 		pane.getChildren().add(pinguView);
-		pinguView.setLayoutX(-28);
+		pinguView.setLayoutX(-18);
 		pinguView.setLayoutY(520);
 
 		pane.getChildren().add(matchaView);
@@ -95,8 +94,8 @@ public class HomeScreen extends SceneBuilder{
 
 		//Ensures that the alerts dialog stage is closed with the main stage
 		stage.setOnCloseRequest(e -> {
-			if(alertsDialog != null && alertsDialog.isShowing()){
-				alertsDialog.close();
+			if(alertsStage != null && alertsStage.isShowing()){
+				alertsStage.close();
 			}
 		});
 
@@ -211,19 +210,20 @@ public class HomeScreen extends SceneBuilder{
 			alertsText.setText("Alerts: " + currAlert.headline);
 
 			alertsText.setOnMouseClicked(e-> {
-				if(alertsDialog != null && alertsDialog.isShowing()) {
-					alertsDialog.close();
+				if(alertsStage != null && alertsStage.isShowing()) {
+					alertsStage.close();
 				}
 				else{
 					Scene nextScene = getAlertsScene(currAlert); //getting the scene for the alerts dialog stage
 
-					alertsDialog = new Stage();
-					alertsDialog.setScene(nextScene);
-					alertsDialog.setTitle("Active Alert");
-					alertsDialog.setResizable(false);
-					alertsDialog.initOwner(stage);
+					alertsStage = new Stage();
+					alertsStage.getIcons().add(new Image("/images/cloudy.png"));
+					alertsStage.setScene(nextScene);
+					alertsStage.setTitle("Active Alert");
+					alertsStage.setResizable(false);
+					alertsStage.initOwner(stage);
 
-					alertsDialog.show();
+					alertsStage.show();
 				}
 			});
 		}
@@ -281,22 +281,21 @@ public class HomeScreen extends SceneBuilder{
 		locationButton.setId("locationButton");
 
 		locationButton.setOnAction(e -> {
-			if(alertsDialog != null && alertsDialog.isShowing()){
-				alertsDialog.close();
+			if(alertsStage != null && alertsStage.isShowing()){
+				alertsStage.close();
 			}
 
 			Scene nextScene = LocationDetails.getScene();
 
-			Stage locationDialog = new Stage();
-			locationStage = locationDialog; //defining locationStage in the scope
+			locationStage = new Stage();
+			locationStage.setScene(nextScene);
+			locationStage.setTitle("LocationDetails");
+			locationStage.setResizable(false);
+			locationStage.getIcons().add(new Image("/images/cloudy.png"));
 
-			locationDialog.setScene(nextScene);
-			locationDialog.setTitle("LocationDetails");
-			locationDialog.setResizable(false);
-
-			locationDialog.initOwner(stage);
-			locationDialog.initModality(Modality.WINDOW_MODAL); //prevents user interaction with main stage until the dialog window has closed
-			locationDialog.show();
+			locationStage.initOwner(stage);
+			locationStage.initModality(Modality.WINDOW_MODAL); //prevents user interaction with main stage until the dialog window has closed
+			locationStage.show();
 		});
 
 		return locationButton;
