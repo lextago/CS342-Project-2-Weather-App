@@ -28,6 +28,7 @@
 
 #shelfScroll .scroll-bar:vertical .thumb{
     -fx-background-color: #C19A6B;
+
 }
 
 #shelfScroll .scroll-bar:horizontal{
