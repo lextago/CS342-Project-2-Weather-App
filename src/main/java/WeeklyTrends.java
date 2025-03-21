@@ -19,7 +19,6 @@ import javafx.util.Pair;
 import java.time.DayOfWeek;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 
 public class WeeklyTrends extends SceneBuilder {
 	public static Scene getScene(){
@@ -96,17 +95,15 @@ public class WeeklyTrends extends SceneBuilder {
 		yAxis.setMinorTickCount(0);
 
 		// Makes a lineChart with xAxis and yAxis
-		final LineChart<String,Number> lineChart =
-				new LineChart<String, Number>(xAxis,yAxis);
+		LineChart<String,Number> lineChart = new LineChart<>(xAxis,yAxis);
 		lineChart.setEffect(HomeScreen.dropShadow);
 		lineChart.setStyle("-fx-prompt-text-fill: White");
 
-		ArrayList<Pair<String, double[]>> minAndMax = MyWeatherAPI.getMinAndMaxTemperatures(region, gridX, gridY);
 		HBox allWeekDays = new HBox();
 		allWeekDays.setAlignment(Pos.CENTER);
 
 		// Displays number of days desired everytime a dropdown selection is clicked
-		numDaysChoices.setOnAction(e -> {;
+		numDaysChoices.setOnAction(e -> {
             // Gets number of days desired
 			String dayChoice = numDaysChoices.getValue();
 			int dayChoiceNumber = Integer.parseInt(dayChoice.split("")[0]);
@@ -124,7 +121,7 @@ public class WeeklyTrends extends SceneBuilder {
 			// Adds low temperature and high temperature for number of days desired
 			for (int i = 1; i < dayChoiceNumber + 1; i++) {
 				// Gets current day abbreviation and adds it to xAxis
-				Pair<String, double[]> pair = minAndMax.get(i);
+				Pair<String, double[]> pair = minAndMaxTemps.get(i);
 				String dateString = pair.getKey();
 				String dateTimeString = dateString.split("/")[0]; // Makes the date format ISO
 				DateTimeFormatter formatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
@@ -134,12 +131,12 @@ public class WeeklyTrends extends SceneBuilder {
 				days.add(dayOfWeekAbbreviation);
 				xAxis.setCategories(days);
 
-				int min = (int) minAndMax.get(i).getValue()[0]; // Low temperature
-				int max = (int) minAndMax.get(i).getValue()[1];
+				int min = (int) minAndMaxTemps.get(i).getValue()[0]; // Low temperature
+				int max = (int) minAndMaxTemps.get(i).getValue()[1];
 
 				if (temperatureUnit.equals("Fahrenheit")) {
-					min = (int) (min * 1.8 + 32); // Celsius to Fahrenheit
-					max = (int) (max * 1.8 + 32);
+					min = convertCelsiusToFahrenheit(min); // Celsius to Fahrenheit
+					max = convertCelsiusToFahrenheit(max);
 				}
 
 				lowTempLine.getData().add(new XYChart.Data(dayOfWeekAbbreviation, min)); // Adds low temperature to the low temperature line
@@ -154,6 +151,7 @@ public class WeeklyTrends extends SceneBuilder {
 		HBox chartBox = new HBox(lineChart);
 		VBox dropdownAndTitle = new VBox(4, weeklyTrends, numDaysChoices, chartBox);
 		dropdownAndTitle.setAlignment(Pos.CENTER);
+
 		VBox root = new VBox(30, dropdownAndTitle);
 		root.setBackground(new Background(backgroundImage));
 
