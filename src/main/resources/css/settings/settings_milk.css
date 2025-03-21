@@ -1,0 +1,27 @@
+#settingsBox{
+    -fx-background-color: #d5bdaf;
+}
+
+#comboBox {
+    -fx-background-color: #ddb892;
+    -fx-opacity: 0.95;
+}
+
+.combo-box .list-cell{
+    -fx-text-fill: white;
+}
+
+.combo-box .list-view .list-cell{
+    -fx-background-color: white;
+    -fx-text-fill: black;
+}
+
+.combo-box .list-view .list-cell:focused {
+    -fx-background-color: #e6ccb2;
+    -fx-text-fill: white;
+}
+
+.combo-box .list-view .list-cell:hover{
+    -fx-background-color: #e3d5ca;
+    -fx-text-fill: white;
+}

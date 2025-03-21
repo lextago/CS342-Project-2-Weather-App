@@ -14,17 +14,31 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Settings extends SceneBuilder{
-	private static VBox root;
 	private static DropShadow dropShadow = new DropShadow();
-	private static BorderPane settingBoxThemes, settingBoxTemperature, settingBoxHour;
 
 	public static Scene getScene(){
 		BorderPane root = getRoot();
 		BorderPane rootPane = new BorderPane(root);
 		rootPane.setBottom(NavigationBar.getNavigationBar());
 
+		String stylesheet = "style.css";
+		switch(theme){
+			case "Matcha":
+				stylesheet = "/css/settings/settings_matcha.css";
+				break;
+			case "Cocoa":
+				stylesheet = "/css/settings/settings_cocoa.css";
+				break;
+			case "Milk":
+				stylesheet = "/css/settings/settings_milk.css";
+				break;
+			case "Ube":
+				stylesheet = "/css/settings/settings_ube.css";
+				break;
+		}
+
 		Scene scene = new Scene(rootPane, 360, 640);
-		scene.getStylesheets().add(SceneBuilder.class.getResource("/css/style.css").toExternalForm());
+		scene.getStylesheets().add(SceneBuilder.class.getResource(stylesheet).toExternalForm());
 
 		return scene;
 	}
@@ -46,33 +60,29 @@ public class Settings extends SceneBuilder{
 		List<String> hourOptions = Arrays.asList("12hr", "24hr");
 
 		ComboBox<String> themesDropdown = new ComboBox(FXCollections.observableArrayList(themesOptions));
-		themesDropdown.getSelectionModel().select(themesOptions.indexOf(theme));
+		themesDropdown.getSelectionModel().select(themesOptions.indexOf(theme)); //displays the current setting as the default selected option
 		themesDropdown.setOnAction(e->{
 			String theme = themesDropdown.getValue();
 			switch(theme){
 				case "Matcha":
-					SceneBuilder.setTheme("Matcha");
+					SceneBuilder.setTheme("Matcha"); //changing theme of app
 					SceneBuilder.setBackgroundImage("/images/backgrounds/plant_wallpaper.jpg");
-					updateBoxThemes("#8A9D6C");
-					root.setBackground(new Background(backgroundImage));
+					stage.setScene(getScene());
 					break;
 				case "Cocoa":
 					SceneBuilder.setTheme("Cocoa");
 					SceneBuilder.setBackgroundImage("/images/backgrounds/brown_background.jpg");
-					updateBoxThemes(" #a47148");
-					root.setBackground(new Background(backgroundImage));
+					stage.setScene(getScene());
 					break;
 				case "Milk":
 					SceneBuilder.setTheme("Milk");
 					SceneBuilder.setBackgroundImage("/images/backgrounds/cream_background.jpg");
-					updateBoxThemes("#d5bdaf");
-					root.setBackground(new Background(backgroundImage));
+					stage.setScene(getScene());
 					break;
 				case "Ube":
 					SceneBuilder.setTheme("Ube");
 					SceneBuilder.setBackgroundImage("/images/backgrounds/ube_background.jpg");
-					updateBoxThemes("#9d4edd");
-					root.setBackground(new Background(backgroundImage));
+					stage.setScene(getScene());
 					break;
 			}
 		});
@@ -91,16 +101,15 @@ public class Settings extends SceneBuilder{
 			SceneBuilder.timeFormat = unit;
 		});
 
-		settingBoxThemes = createSettingsBox(themesText, themesDropdown);
-		settingBoxTemperature = createSettingsBox(temperatureText, temperatureDropdown);
-		settingBoxHour = createSettingsBox(chooseHourText, hourDropdown);
-
+		BorderPane settingBoxThemes = createSettingsBox(themesText, themesDropdown);
+		BorderPane settingBoxTemperature = createSettingsBox(temperatureText, temperatureDropdown);
+		BorderPane settingBoxHour = createSettingsBox(chooseHourText, hourDropdown);
 
 		//Putting all the elements together
 		VBox settingBoxTop = new VBox(4, settingsLabel, settingBoxThemes, settingBoxTemperature, settingBoxHour);
 		settingBoxTop.setAlignment(Pos.CENTER);
 
-		root = new VBox(20, settingBoxTop);
+		VBox root = new VBox(20, settingBoxTop);
 		root.setBackground(new Background(backgroundImage));
 
 		BorderPane borderPane = new BorderPane(root);
@@ -112,7 +121,9 @@ public class Settings extends SceneBuilder{
 		text.setFont(new Font("Inter", 20));
 		text.setTextFill(Color.WHITE);
 		text.setEffect(dropShadow);
+
 		dropdown.setPrefWidth(100);
+		dropdown.setId("comboBox");
 
 		BorderPane settingPanel = new BorderPane();
 		settingPanel.setLeft(text);
@@ -122,27 +133,7 @@ public class Settings extends SceneBuilder{
 		settingPanel.setBorder(Border.stroke(Color.BLACK));
 		settingPanel.setMaxWidth(340);
 		settingPanel.setOpacity(0.9);
-
-		switch(theme){
-			case "Matcha":
-				settingPanel.setStyle("-fx-background-color: #8A9D6C;");
-				break;
-			case "Cocoa":
-				settingPanel.setStyle("-fx-background-color: #a47148;");
-				break;
-			case "Milk":
-				settingPanel.setStyle("-fx-background-color: #d5bdaf;");
-				break;
-			case "Ube":
-				settingPanel.setStyle("-fx-background-color: #9d4edd;");
-				break;
-		}
+		settingPanel.setId("settingsBox");
 		return settingPanel;
-	}
-
-	private static void updateBoxThemes(String color){
-		settingBoxThemes.setStyle("-fx-background-color: " + color + ";");
-		settingBoxTemperature.setStyle("-fx-background-color: " + color + ";");
-		settingBoxHour.setStyle("-fx-background-color: " + color + ";");
 	}
 }

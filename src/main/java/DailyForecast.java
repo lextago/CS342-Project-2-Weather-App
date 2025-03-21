@@ -11,9 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import javafx.util.Pair;
 import weather.Period;
-import weather.WeatherAPI;
 
 import java.text.SimpleDateFormat;
 import java.time.DayOfWeek;
@@ -74,8 +72,6 @@ public class DailyForecast extends SceneBuilder{
 	}
 
 	public static BorderPane getRoot(){
-		rootVBox = new VBox();
-
 		ComboBox<String> numDaysChoices = new ComboBox<>(); // Dropdown of all day choices
 		numDaysChoices.setPromptText("Select Days");
 		numDaysChoices.setId("comboBox");
