@@ -20,12 +20,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class DailyForecast extends SceneBuilder{
-	private static int hourlyIndex;
+	private static String stylesheet; //stylesheet used for this scene and the dialog stage's scene
+	private static int hourlyIndex; //Index for the current hour of the week
+
 	private static ScrollPane hourlyScrollPane;
 	private static VBox rootVBox;
 	private static DropShadow dropShadow = new DropShadow();
-	private static Stage hourlyDialog;
-	private static String stylesheet;
+
+	private static Stage hourlyDialog; //Dialog stage that displays the 24-hour forecast for the day
 
 	public static Scene getScene(){
 		BorderPane root = getRoot();
@@ -78,20 +80,20 @@ public class DailyForecast extends SceneBuilder{
 		numDaysChoices.getItems().addAll("3 Day", "5 Day", "7 Day");
 		numDaysChoices.setPrefWidth(200);
 
-		hourlyScrollPane = new ScrollPane();
-		hourlyScrollPane.setPrefHeight(600);
-
 		numDaysChoices.setOnAction(event -> {
 			// Gets number of days desired
 			String dayChoice = numDaysChoices.getValue();
-			int dayChoiceNumber = Integer.parseInt(dayChoice.split("")[0]);
+			int dayChoiceNumber = Integer.parseInt(dayChoice.split("")[0]); //"3 day" -> 3
 
-			rootVBox.getChildren().remove(hourlyScrollPane);
+			rootVBox.getChildren().remove(hourlyScrollPane); //removes the scrollpane from the root
 
-			hourlyScrollPane = getHourlyScroll(dayChoiceNumber);
+			hourlyScrollPane = getHourlyScroll(dayChoiceNumber); //updates the scrollpane to hold the right amount of boxes
 
-			rootVBox.getChildren().add(hourlyScrollPane);
+			rootVBox.getChildren().add(hourlyScrollPane); //reinserts the updated scrollpane to the root
 		});
+
+		hourlyScrollPane = new ScrollPane(); //allows scrolling when the boxes exceed the screen
+		hourlyScrollPane.setPrefHeight(600);
 
 		Label dailyForecast = new Label("Daily Forecast");
 		dailyForecast.setTextFill(Color.rgb(255,255,255));
@@ -109,7 +111,7 @@ public class DailyForecast extends SceneBuilder{
 
 	//Creating the ScrollPane used to display the forecasts of the number of days the user inputs
 	private static ScrollPane getHourlyScroll(int numDays){
-		VBox daysVBox = new VBox(5);
+		VBox daysVBox = new VBox(5); //empty vbox which will be filled with boxes for each day
 		daysVBox.setStyle("-fx-background-color: transparent");
 
 		ArrayList<BorderPane> dayPanes = new ArrayList<>();
@@ -132,12 +134,17 @@ public class DailyForecast extends SceneBuilder{
 			Period todayPeriod = periods.get(forecastIndex);
 			Period tonightPeriod = periods.get(tonightIndex);
 
-			//sometimes the api's list of objects start at tonight which is a problem because of
-			//overlapping dates, thus have to increment the index used to retrieve the next forecast
-			//by a different number
+			/*
+				The API's list of forecasts can start in 3 ways:
+				1. During the day, the list starts with the daytime, followed by the nighttime, then the next day's forecast.
+				2. At night, the list starts with the nighttime forecast, followed by the next day's forecast.
+				3. During midnight, the list starts with the "overnight" forecast, followed by the daytime, then the nighttime forecast.
 
- 			//also the api's list can start with overnight when using it during midnight which leads to
-			//duplicate dates, which is a bit unfortunate (when this happens, the same day will appear 3 times in the api)
+				Case 1: increment forecastIndex by 2, next box starts with the next day
+				Case 2: increment forecastIndex by 1, next box starts with the next day
+				Case 3: increment forecastIndex by 1, this box displays the forecast for the rest of the day (overnight), then
+													  next box displays the same day but during daytime and nighttime
+			 */
 			if((periods.get(0).name.equals("Tonight") || periods.get(0).name.equals("Overnight")) && i == 0){
 				forecastIndex++; //incrementing by one if the first forecast only had one period
 			}
@@ -156,7 +163,7 @@ public class DailyForecast extends SceneBuilder{
 			String dayString = dayOfWeek.toString().substring(0,3); //getting day abbreviation
 
 			String dateLabelString = dayString + " " + month + "/" + monthDay;
-			if(periods.get(i).name.equals("Overnight")){
+			if(periods.get(i).name.equals("Overnight")){ //have to clarify that this box is displaying the overnight info, not a duplicated day
 				dateLabelString = "(Overnight) " + dateLabelString;
 			}
 			Label dateLabel = new Label(dateLabelString);
@@ -191,9 +198,11 @@ public class DailyForecast extends SceneBuilder{
 
 				int paneIndex = dayPanes.indexOf(dayPaneTop);
 
+				boolean singlePeriod = (periods.get(0).name.equals("Tonight") || periods.get(0).name.equals("Overnight"));
+
 				hourlyDialog = new Stage();
 				hourlyDialog.setTitle("Hourly Forecast for " + dayString + " " + month + "/" + monthDay);
-				BorderPane hourlyRoot = getHourlyForecastRoot(hourlyIndex, paneIndex);
+				BorderPane hourlyRoot = getHourlyForecastRoot(hourlyIndex, paneIndex, singlePeriod);
 				hourlyRoot.setBackground(new Background(backgroundImage));
 
 				Scene nextScene = new Scene(hourlyRoot, 340, 600);
@@ -227,10 +236,8 @@ public class DailyForecast extends SceneBuilder{
 
 				dayVBox = new VBox(dayPaneTop, descriptionPane, todayPane, tonightPane);
 			}
-
 			daysVBox.getChildren().add(dayVBox);
 		}
-
 		return new ScrollPane(daysVBox);
 	}
 
@@ -259,7 +266,7 @@ public class DailyForecast extends SceneBuilder{
 
 
 	//used for the hourlyDialog stage to create the root of the scene
-	private static BorderPane getHourlyForecastRoot(int hourlyIndex, int paneIndex){
+	private static BorderPane getHourlyForecastRoot(int hourlyIndex, int paneIndex, boolean singlePeriod){
 		SimpleDateFormat dayFormat = new SimpleDateFormat("E M/d");
 		SimpleDateFormat hourFormat = new SimpleDateFormat("hh a");
 		if(timeFormat.equals("24hr")){
@@ -268,17 +275,26 @@ public class DailyForecast extends SceneBuilder{
 
 		VBox hourlyVBox = new VBox(5);
 
+		int forecastIndex = paneIndex * 2;
 		int startIndex, endIndex;
-		if(paneIndex == 0){ //if the pane clicked is the first
+		if(paneIndex == 0){ //if this is the first pane:
 			startIndex = 0; //start at zero
 			endIndex = hourlyIndex; //end at the index of the next day
+
 		}
 		else{
 			startIndex = hourlyIndex + (paneIndex - 1) * 24; //start at the index of the next day + 24 hours for each day after the first
 			endIndex = Math.min(startIndex + 24, 155); //the api only gives us the forecast for the next 155 hours, ensures that the end is not out of bounds
 		}
 
-		Period currPeriod = periods.get(paneIndex * 2);
+		if(singlePeriod && paneIndex == 1){ //if the first day only has one period, then the second day's period starts at index 1
+			forecastIndex = 1;
+		}
+		else if(singlePeriod && paneIndex != 0){ //if the first day only has one period, have to shift the index down by one
+			forecastIndex--;
+		}
+
+		Period currPeriod = periods.get(forecastIndex);
 
 		Label day = new Label("Hourly Forecast for " + dayFormat.format(currPeriod.startTime));
 		day.setFont(Font.font("Verdana", FontWeight.BOLD,15));
@@ -298,6 +314,8 @@ public class DailyForecast extends SceneBuilder{
 		forecastView.setFitWidth(100);
 		forecastView.setEffect(dropShadow);
 
+		//from the starting index of this day to the index of the next day
+		//(e.g. 0-17 for the first day when there's only 17 hours left in the day, then 17-41 (17+24=41) for the next day's indices
 		for(int i = startIndex; i < endIndex; i++){
 			HourlyPeriod currHour = hourlyPeriods.get(i);
 
@@ -320,7 +338,7 @@ public class DailyForecast extends SceneBuilder{
 			Label rainChance = new Label(currHour.probabilityOfPrecipitation.value + "%");
 			rainChance.setId("dailyLabel");
 			if(currHour.probabilityOfPrecipitation.value == 0){
-				rainChance.setTextFill(Color.web("#36454f"));
+				rainChance.setTextFill(Color.web("#36454f")); //different text color when rain chance is 0
 			}
 			else{
 				rainChance.setTextFill(Color.web("#89CFF0"));
@@ -362,9 +380,7 @@ public class DailyForecast extends SceneBuilder{
 		scrollPane.setMaxHeight(500);
 
 		Button back = new Button("Back");
-		back.setOnAction(e -> {
-			hourlyDialog.close();
-		});
+		back.setOnAction(e -> hourlyDialog.close()); //back only closes the dialog stage
 		back.setId("back");
 
 		HBox dayBox = new HBox(day);
