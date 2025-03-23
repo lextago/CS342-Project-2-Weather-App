@@ -57,6 +57,7 @@ This is displayed on a line chart which updates based on the number of days.
 ## Creating a Mapbox API key
 
 In order to use the city/state inputs to change the location of the app, a [Mapbox](https://www.mapbox.com/) API key/access token is required. <br/>
+It's free to make an account and acquire a token, and the first 100k requests for the geocoding service API are completely free of charge. <br/>
 Once acquired, the easiest way to add your token as an environment variable is through editing the configurations in IntelliJ IDEA.
 
 ### Adding your token to the list of environment variables:
